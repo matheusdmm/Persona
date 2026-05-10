@@ -14,7 +14,8 @@ export const useCharacterStore = defineStore('character', () => {
   const currentStep = ref(0)
   const loading = ref(false)
   const error = ref(null)
-  const savedCharacters = ref(JSON.parse(localStorage.getItem('dnd_characters') || '[]'))
+  const LS_KEY = 'dnd_characters'
+  const savedCharacters = ref(JSON.parse(localStorage.getItem(LS_KEY) || '[]'))
   const availableSpells = ref([])
   const spellsLoading = ref(false)
   const spellsCache = {}
@@ -86,7 +87,7 @@ export const useCharacterStore = defineStore('character', () => {
   }
 
   function _persistSaved() {
-    localStorage.setItem('dnd_characters', JSON.stringify(savedCharacters.value))
+    localStorage.setItem(LS_KEY, JSON.stringify(savedCharacters.value))
   }
 
   function saveCharacter() {
@@ -96,6 +97,18 @@ export const useCharacterStore = defineStore('character', () => {
     const idx = savedCharacters.value.findIndex(c => c.id === id)
     if (idx >= 0) savedCharacters.value[idx] = entry
     else savedCharacters.value.unshift(entry)
+    _persistSaved()
+  }
+
+  function importCharacter(data) {
+    const id = String(Date.now())
+    const entry = {
+      id,
+      savedAt: new Date().toISOString(),
+      draft: { ...emptyCharacter(), ...data.draft, savedId: id },
+      sheet: data.sheet ?? null,
+    }
+    savedCharacters.value.unshift(entry)
     _persistSaved()
   }
 
@@ -115,6 +128,6 @@ export const useCharacterStore = defineStore('character', () => {
     availableSpells, spellsLoading,
     selectedRace, selectedClass, isComplete, isSaved,
     loadData, calculate, nextStep, prevStep, reset,
-    loadSpells, saveCharacter, unsaveCharacter, loadSavedCharacter,
+    loadSpells, saveCharacter, importCharacter, unsaveCharacter, loadSavedCharacter,
   }
 })

@@ -442,10 +442,9 @@ import { computed } from 'vue'
 import { useCharacterStore } from '@/stores/character.js'
 import {
   ABILITY_NAMES, ABILITY_LABELS, SKILL_MAP, WEAPONS, isProficientWith,
-  SPELLCASTING_CLASSES, SPELLCASTING_ABILITY, getSpellSlots,
+  SPELLCASTING_CLASSES, SPELLCASTING_ABILITY, getSpellSlots, SPELL_LEVEL_LABELS,
 } from '@/types/index.js'
-
-const SPELL_LEVEL_LABELS = ['Cantrip', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th']
+import { formatMod } from '@/composables/useAbilityScores.js'
 
 const store = useCharacterStore()
 
@@ -545,10 +544,6 @@ const spellsByLevel = computed(() => {
   }
   return [...grouped.entries()].sort(([a], [b]) => a - b)
 })
-
-function formatMod(n) {
-  return n >= 0 ? `+${n}` : `${n}`
-}
 
 function toggleSave() {
   if (store.isSaved) store.unsaveCharacter(store.draft.savedId)

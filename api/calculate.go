@@ -55,8 +55,26 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid input", http.StatusBadRequest)
 		return
 	}
+	if input.Race == "" || input.Class == "" {
+		http.Error(w, "race and class are required", http.StatusBadRequest)
+		return
+	}
+
+	for _, score := range []int{
+		input.Abilities.Strength, input.Abilities.Dexterity, input.Abilities.Constitution,
+		input.Abilities.Intelligence, input.Abilities.Wisdom, input.Abilities.Charisma,
+	} {
+		if score < 1 || score > 20 {
+			http.Error(w, "ability scores must be between 3 and 20", http.StatusBadRequest)
+			return
+		}
+	}
+
 	if input.Level < 1 {
 		input.Level = 1
+	}
+	if input.Level > 20 {
+		input.Level = 20
 	}
 
 	mods := AbilityScores{
@@ -77,6 +95,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	if hitDie == 0 {
 		hitDie = 8
 	}
+	// floor(hitDie/2)+1 is the average roll on a hit die, used for levels 2+
 	maxHP := hitDie + mods.Constitution + (input.Level-1)*(hitDie/2+1+mods.Constitution)
 
 	sheet := CharacterSheet{
@@ -88,5 +107,5 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		ArmorClass:       10 + mods.Dexterity,
 	}
 
-	json.NewEncoder(w).Encode(sheet)
+	_ = json.NewEncoder(w).Encode(sheet)
 }

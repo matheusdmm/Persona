@@ -54,7 +54,7 @@
               ? 'bg-gold/20 text-gold border-gold/40'
               : 'bg-stone-800 text-stone-400 border-stone-700 hover:border-stone-500 hover:text-stone-300'"
           >
-            {{ tab === -1 ? 'All' : LEVEL_LABELS[tab] }}
+            {{ tab === -1 ? 'All' : SPELL_LEVEL_LABELS[tab] }}
           </button>
         </div>
       </div>
@@ -79,7 +79,7 @@
         >
           <div class="font-semibold text-sm leading-tight">{{ spell.name }}</div>
           <div class="text-xs opacity-60 mt-0.5">
-            {{ LEVEL_LABELS[spell.level_int] }} · {{ spell.school }}
+            {{ SPELL_LEVEL_LABELS[spell.level_int] }} · {{ spell.school }}
           </div>
           <div class="text-xs opacity-40 mt-0.5">{{ spell.casting_time }}</div>
         </button>
@@ -90,10 +90,8 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { SPELLCASTING_CLASSES, SPELLCASTING_ABILITY, getSpellSlots } from '@/types/index.js'
+import { SPELLCASTING_CLASSES, SPELLCASTING_ABILITY, getSpellSlots, SPELL_SPELL_LEVEL_LABELS } from '@/types/index.js'
 import { useCharacterStore } from '@/stores/character.js'
-
-const LEVEL_LABELS = ['Cantrip', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th']
 
 const props = defineProps({
   modelValue: { type: Object, required: true },

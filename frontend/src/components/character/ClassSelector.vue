@@ -5,9 +5,24 @@
       Your class defines your role in combat and adventure.
     </p>
 
+    <!-- Edition filter -->
+    <div class="flex gap-2 mb-6">
+      <button
+        v-for="ed in editions"
+        :key="ed.value"
+        class="px-4 py-1.5 text-sm border rounded-md transition-all duration-150"
+        :class="filter === ed.value
+          ? 'border-gold text-gold bg-gold/10 shadow-sm'
+          : 'border-stone-600 text-stone-400 hover:border-stone-500'"
+        @click="filter = ed.value"
+      >
+        {{ ed.label }}
+      </button>
+    </div>
+
     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
       <BaseCard
-        v-for="cls in classes"
+        v-for="cls in filteredClasses"
         :key="cls.id"
         clickable
         :selected="selected === cls.id"
@@ -62,7 +77,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
 
 const props = defineProps({
@@ -70,6 +85,18 @@ const props = defineProps({
   selected: { type: String, default: '' },
 })
 defineEmits(['update:selected'])
+
+const filter = ref('all')
+const editions = [
+  { value: 'all', label: 'All' },
+  { value: '5e', label: '5e' },
+  { value: '5.5e', label: '5.5e' },
+]
+
+const filteredClasses = computed(() => {
+  if (filter.value === 'all') return props.classes
+  return props.classes.filter(c => c.edition === filter.value || c.edition === 'both')
+})
 
 const selectedClass = computed(() => props.classes.find(c => c.id === props.selected))
 </script>

@@ -2,8 +2,14 @@
   <div class="max-w-5xl mx-auto px-4 py-8">
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-3xl font-semibold text-parchment">Saved Characters</h1>
-      <RouterLink to="/create" class="btn-primary text-sm">New Character</RouterLink>
+      <div class="flex gap-2">
+        <button class="btn-secondary text-sm" @click="triggerImport">Import JSON</button>
+        <RouterLink to="/create" class="btn-primary text-sm">New Character</RouterLink>
+        <input ref="fileInput" type="file" accept=".json" class="hidden" @change="handleImport" />
+      </div>
     </div>
+
+    <p v-if="importError" class="text-sm text-red-500 mb-4">{{ importError }}</p>
 
     <div v-if="store.savedCharacters.length === 0" class="text-center py-24 text-stone-400">
       <svg class="w-12 h-12 mx-auto mb-4 opacity-30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -46,11 +52,15 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCharacterStore } from '@/stores/character.js'
 
 const store = useCharacterStore()
 const router = useRouter()
+
+const fileInput = ref(null)
+const importError = ref('')
 
 function open(saved) {
   store.loadSavedCharacter(saved)
@@ -63,5 +73,25 @@ function remove(id) {
 
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
+function triggerImport() {
+  importError.value = ''
+  fileInput.value.click()
+}
+
+async function handleImport(e) {
+  const file = e.target.files[0]
+  if (!file) return
+  try {
+    const text = await file.text()
+    const data = JSON.parse(text)
+    if (!data?.draft) throw new Error()
+    store.importCharacter(data)
+  } catch {
+    importError.value = 'Invalid file — make sure it\'s an exported HeroScribe character.'
+  } finally {
+    e.target.value = ''
+  }
 }
 </script>

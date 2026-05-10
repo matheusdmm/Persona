@@ -67,6 +67,7 @@
 import { computed, onMounted } from 'vue'
 import { useCharacterStore } from '@/stores/character.js'
 import { SKILL_MAP, ABILITY_LABELS } from '@/types/index.js'
+import { modifier, formatMod } from '@/composables/useAbilityScores.js'
 
 const props = defineProps({
   modelValue: { type: Object, required: true },
@@ -90,12 +91,7 @@ const profBonus = computed(() => {
 })
 
 function abilityMod(ability) {
-  const score = props.modelValue.abilities?.[ability] ?? 10
-  return Math.floor((score - 10) / 2)
-}
-
-function formatMod(n) {
-  return n >= 0 ? `+${n}` : `${n}`
+  return modifier(props.modelValue.abilities?.[ability] ?? 10)
 }
 
 function isSelected(key) {

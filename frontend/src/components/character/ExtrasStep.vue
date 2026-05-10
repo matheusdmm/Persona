@@ -41,7 +41,7 @@
           <input
             type="number"
             :value="modelValue.gold"
-            @input="update('gold', +$event.target.value)"
+            @input="update('gold', Number($event.target.value))"
             min="0"
             class="w-28 bg-stone-800 border border-stone-600 text-parchment px-3 py-2
                    focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20

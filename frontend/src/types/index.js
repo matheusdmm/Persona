@@ -61,6 +61,8 @@
 
 export const ABILITY_NAMES = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
 
+export const SPELL_LEVEL_LABELS = ['Cantrip', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th']
+
 export const ABILITY_LABELS = {
   strength: 'STR',
   dexterity: 'DEX',
@@ -214,7 +216,10 @@ export const SPELLCASTING_ABILITY = {
   wizard:   'intelligence',
 }
 
-// Spell slots per character level — index [level-1][spellLevel-1], values 0-4
+export const MIN_LEVEL = 1
+export const MAX_LEVEL = 20
+
+// Spell slots per character level — row index is (level-1), column index is (spellLevel-1)
 const FULL_SLOTS = [
   [2,0,0,0,0,0,0,0,0], [3,0,0,0,0,0,0,0,0], [4,2,0,0,0,0,0,0,0], [4,3,0,0,0,0,0,0,0],
   [4,3,2,0,0,0,0,0,0], [4,3,3,0,0,0,0,0,0], [4,3,3,1,0,0,0,0,0], [4,3,3,2,0,0,0,0,0],
@@ -239,7 +244,7 @@ const WARLOCK_PACT = [
 
 /** Returns an array of 9 slot counts (index 0 = 1st level), or null for non-casters. */
 export function getSpellSlots(className, level) {
-  const idx = Math.min(Math.max(level, 1), 20) - 1
+  const idx = Math.min(Math.max(level, MIN_LEVEL), MAX_LEVEL) - 1
   if (['bard', 'cleric', 'druid', 'sorcerer', 'wizard'].includes(className)) return FULL_SLOTS[idx]
   if (['paladin', 'ranger'].includes(className)) return HALF_SLOTS[idx]
   if (className === 'warlock') {

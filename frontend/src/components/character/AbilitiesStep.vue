@@ -14,7 +14,7 @@
         :class="method === m.value
           ? 'border-gold text-gold bg-gold/10 shadow-sm'
           : 'border-stone-600 text-stone-400 hover:border-stone-500'"
-        @click="method = m.value"
+        @click="setMethod(m.value)"
       >
         {{ m.label }}
       </button>
@@ -71,7 +71,7 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, watch } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import AbilityScoreInput from '@/components/ui/AbilityScoreInput.vue'
 import { ABILITY_NAMES, ABILITY_LABELS } from '@/types/index.js'
 import { useAbilityScores } from '@/composables/useAbilityScores.js'
@@ -94,14 +94,15 @@ const methods = [
   { value: 'roll', label: 'Dice Roll' },
 ]
 
-const { pointBuyCost } = useAbilityScores(computed(() => scores.value))
+const { pointBuyCost } = useAbilityScores()
 const pointsSpent = computed(() => pointBuyCost(scores.value))
 
 const rollResults = reactive({})
 
-watch(method, (val) => {
-  if (val === 'roll') rollAll()
-})
+function setMethod(value) {
+  method.value = value
+  if (value === 'roll') rollAll()
+}
 
 function roll2d20DropLowest() {
   const dice = Array.from({ length: 2 }, () => Math.ceil(Math.random() * 20))

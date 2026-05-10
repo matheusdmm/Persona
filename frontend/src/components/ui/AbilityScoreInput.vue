@@ -4,7 +4,7 @@
     <input
       type="number"
       :value="modelValue"
-      @input="$emit('update:modelValue', +$event.target.value)"
+      @input="$emit('update:modelValue', Number($event.target.value))"
       min="1"
       max="20"
       class="w-16 h-16 text-center text-xl font-bold bg-stone-800 border border-stone-600
@@ -15,13 +15,14 @@
       class="text-sm font-semibold"
       :class="mod >= 0 ? 'text-vivid' : 'text-red-500'"
     >
-      {{ mod >= 0 ? `+${mod}` : mod }}
+      {{ formatMod(mod) }}
     </span>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { modifier, formatMod } from '@/composables/useAbilityScores.js'
 
 const props = defineProps({
   modelValue: { type: Number, required: true },
@@ -29,5 +30,5 @@ const props = defineProps({
 })
 defineEmits(['update:modelValue'])
 
-const mod = computed(() => Math.floor((props.modelValue - 10) / 2))
+const mod = computed(() => modifier(props.modelValue))
 </script>

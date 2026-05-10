@@ -38,7 +38,7 @@
         <input
           type="number"
           :value="modelValue.level"
-          @input="update('level', +$event.target.value)"
+          @input="update('level', Number($event.target.value))"
           min="1"
           max="20"
           class="w-24 bg-stone-800 border border-stone-600 text-parchment px-3 py-2
