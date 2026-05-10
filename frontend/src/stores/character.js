@@ -4,7 +4,7 @@ import { emptyCharacter } from '@/types/index.js'
 import { useApi } from '@/composables/useApi.js'
 
 export const useCharacterStore = defineStore('character', () => {
-  const { fetchRaces, fetchClasses, calculateSheet } = useApi()
+  const { fetchRaces, fetchClasses, calculateSheet, fetchSpells } = useApi()
 
   // State
   const draft = ref(emptyCharacter())
@@ -14,12 +14,19 @@ export const useCharacterStore = defineStore('character', () => {
   const currentStep = ref(0)
   const loading = ref(false)
   const error = ref(null)
+  const savedCharacters = ref(JSON.parse(localStorage.getItem('dnd_characters') || '[]'))
+  const availableSpells = ref([])
+  const spellsLoading = ref(false)
+  const spellsCache = {}
 
   // Getters
   const selectedRace = computed(() => races.value.find(r => r.id === draft.value.race))
   const selectedClass = computed(() => classes.value.find(c => c.id === draft.value.class))
   const isComplete = computed(() =>
     draft.value.name && draft.value.race && draft.value.class && draft.value.background
+  )
+  const isSaved = computed(() =>
+    !!draft.value.savedId && savedCharacters.value.some(c => c.id === draft.value.savedId)
   )
 
   // Actions
@@ -61,9 +68,53 @@ export const useCharacterStore = defineStore('character', () => {
     error.value = null
   }
 
+  async function loadSpells(className) {
+    if (spellsCache[className]) {
+      availableSpells.value = spellsCache[className]
+      return
+    }
+    spellsLoading.value = true
+    try {
+      const spells = await fetchSpells(className)
+      spellsCache[className] = spells
+      availableSpells.value = spells
+    } catch (e) {
+      error.value = 'Failed to load spells'
+    } finally {
+      spellsLoading.value = false
+    }
+  }
+
+  function _persistSaved() {
+    localStorage.setItem('dnd_characters', JSON.stringify(savedCharacters.value))
+  }
+
+  function saveCharacter() {
+    const id = draft.value.savedId || String(Date.now())
+    draft.value.savedId = id
+    const entry = { id, savedAt: new Date().toISOString(), draft: { ...draft.value }, sheet: sheet.value }
+    const idx = savedCharacters.value.findIndex(c => c.id === id)
+    if (idx >= 0) savedCharacters.value[idx] = entry
+    else savedCharacters.value.unshift(entry)
+    _persistSaved()
+  }
+
+  function unsaveCharacter(id) {
+    savedCharacters.value = savedCharacters.value.filter(c => c.id !== id)
+    if (draft.value.savedId === id) draft.value.savedId = null
+    _persistSaved()
+  }
+
+  function loadSavedCharacter(saved) {
+    draft.value = { ...saved.draft }
+    sheet.value = saved.sheet
+  }
+
   return {
-    draft, races, classes, sheet, currentStep, loading, error,
-    selectedRace, selectedClass, isComplete,
+    draft, races, classes, sheet, currentStep, loading, error, savedCharacters,
+    availableSpells, spellsLoading,
+    selectedRace, selectedClass, isComplete, isSaved,
     loadData, calculate, nextStep, prevStep, reset,
+    loadSpells, saveCharacter, unsaveCharacter, loadSavedCharacter,
   }
 })

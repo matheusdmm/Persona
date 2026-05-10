@@ -1,4 +1,25 @@
+# Dependencies
+**/node_modules/
+
+# Build output
+frontend/dist/
+frontend/.vite/
+
+# Vercel
 .vercel
-*/*dist
+
+# Environment
 .env
+.env.local
+.env.*.local
+
+# Go
+*.exe
+*.test
+*.out
+
+# OS
+.DS_Store
+Thumbs.db
+
 CLAUDE.md

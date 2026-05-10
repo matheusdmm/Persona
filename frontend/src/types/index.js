@@ -150,6 +150,107 @@ export const BACKGROUNDS = [
   'Outlander', 'Sage', 'Sailor', 'Soldier', 'Urchin',
 ]
 
+export const WEAPONS = [
+  // ── Simple Melee ──
+  { id: 'club',          name: 'Club',           category: 'simple',  damage: '1d4',  damageType: 'bludgeoning', ranged: false, finesse: false },
+  { id: 'dagger',        name: 'Dagger',          category: 'simple',  damage: '1d4',  damageType: 'piercing',    ranged: false, finesse: true  },
+  { id: 'greatclub',     name: 'Greatclub',       category: 'simple',  damage: '1d8',  damageType: 'bludgeoning', ranged: false, finesse: false },
+  { id: 'handaxe',       name: 'Handaxe',         category: 'simple',  damage: '1d6',  damageType: 'slashing',    ranged: false, finesse: false },
+  { id: 'javelin',       name: 'Javelin',          category: 'simple',  damage: '1d6',  damageType: 'piercing',    ranged: false, finesse: false },
+  { id: 'light_hammer',  name: 'Light Hammer',    category: 'simple',  damage: '1d4',  damageType: 'bludgeoning', ranged: false, finesse: false },
+  { id: 'mace',          name: 'Mace',            category: 'simple',  damage: '1d6',  damageType: 'bludgeoning', ranged: false, finesse: false },
+  { id: 'quarterstaff',  name: 'Quarterstaff',    category: 'simple',  damage: '1d6',  damageType: 'bludgeoning', ranged: false, finesse: false },
+  { id: 'sickle',        name: 'Sickle',          category: 'simple',  damage: '1d4',  damageType: 'slashing',    ranged: false, finesse: false },
+  { id: 'spear',         name: 'Spear',           category: 'simple',  damage: '1d6',  damageType: 'piercing',    ranged: false, finesse: false },
+  // ── Simple Ranged ──
+  { id: 'dart',          name: 'Dart',            category: 'simple',  damage: '1d4',  damageType: 'piercing',    ranged: true,  finesse: true  },
+  { id: 'light_crossbow',name: 'Light Crossbow',  category: 'simple',  damage: '1d8',  damageType: 'piercing',    ranged: true,  finesse: false },
+  { id: 'shortbow',      name: 'Shortbow',        category: 'simple',  damage: '1d6',  damageType: 'piercing',    ranged: true,  finesse: false },
+  { id: 'sling',         name: 'Sling',           category: 'simple',  damage: '1d4',  damageType: 'bludgeoning', ranged: true,  finesse: false },
+  // ── Martial Melee ──
+  { id: 'battleaxe',     name: 'Battleaxe',       category: 'martial', damage: '1d8',  damageType: 'slashing',    ranged: false, finesse: false },
+  { id: 'flail',         name: 'Flail',           category: 'martial', damage: '1d8',  damageType: 'bludgeoning', ranged: false, finesse: false },
+  { id: 'glaive',        name: 'Glaive',          category: 'martial', damage: '1d10', damageType: 'slashing',    ranged: false, finesse: false },
+  { id: 'greataxe',      name: 'Greataxe',        category: 'martial', damage: '1d12', damageType: 'slashing',    ranged: false, finesse: false },
+  { id: 'greatsword',    name: 'Greatsword',      category: 'martial', damage: '2d6',  damageType: 'slashing',    ranged: false, finesse: false },
+  { id: 'halberd',       name: 'Halberd',         category: 'martial', damage: '1d10', damageType: 'slashing',    ranged: false, finesse: false },
+  { id: 'longsword',     name: 'Longsword',       category: 'martial', damage: '1d8',  damageType: 'slashing',    ranged: false, finesse: false },
+  { id: 'maul',          name: 'Maul',            category: 'martial', damage: '2d6',  damageType: 'bludgeoning', ranged: false, finesse: false },
+  { id: 'morningstar',   name: 'Morningstar',     category: 'martial', damage: '1d8',  damageType: 'piercing',    ranged: false, finesse: false },
+  { id: 'rapier',        name: 'Rapier',          category: 'martial', damage: '1d8',  damageType: 'piercing',    ranged: false, finesse: true  },
+  { id: 'scimitar',      name: 'Scimitar',        category: 'martial', damage: '1d6',  damageType: 'slashing',    ranged: false, finesse: true  },
+  { id: 'shortsword',    name: 'Shortsword',      category: 'martial', damage: '1d6',  damageType: 'piercing',    ranged: false, finesse: true  },
+  { id: 'trident',       name: 'Trident',         category: 'martial', damage: '1d6',  damageType: 'piercing',    ranged: false, finesse: false },
+  { id: 'war_pick',      name: 'War Pick',        category: 'martial', damage: '1d8',  damageType: 'piercing',    ranged: false, finesse: false },
+  { id: 'warhammer',     name: 'Warhammer',       category: 'martial', damage: '1d8',  damageType: 'bludgeoning', ranged: false, finesse: false },
+  { id: 'whip',          name: 'Whip',            category: 'martial', damage: '1d4',  damageType: 'slashing',    ranged: false, finesse: true  },
+  // ── Martial Ranged ──
+  { id: 'hand_crossbow', name: 'Hand Crossbow',   category: 'martial', damage: '1d6',  damageType: 'piercing',    ranged: true,  finesse: false },
+  { id: 'heavy_crossbow',name: 'Heavy Crossbow',  category: 'martial', damage: '1d10', damageType: 'piercing',    ranged: true,  finesse: false },
+  { id: 'longbow',       name: 'Longbow',         category: 'martial', damage: '1d8',  damageType: 'piercing',    ranged: true,  finesse: false },
+]
+
+export function isProficientWith(weapon, classProficiencies) {
+  if (!classProficiencies?.length) return false
+  return (
+    classProficiencies.includes(weapon.category) ||
+    classProficiencies.includes(weapon.id) ||
+    classProficiencies.includes(weapon.id + 's')
+  )
+}
+
+export const SPELLCASTING_CLASSES = new Set([
+  'bard', 'cleric', 'druid', 'paladin', 'ranger', 'sorcerer', 'warlock', 'wizard',
+])
+
+export const SPELLCASTING_ABILITY = {
+  bard:     'charisma',
+  cleric:   'wisdom',
+  druid:    'wisdom',
+  paladin:  'charisma',
+  ranger:   'wisdom',
+  sorcerer: 'charisma',
+  warlock:  'charisma',
+  wizard:   'intelligence',
+}
+
+// Spell slots per character level — index [level-1][spellLevel-1], values 0-4
+const FULL_SLOTS = [
+  [2,0,0,0,0,0,0,0,0], [3,0,0,0,0,0,0,0,0], [4,2,0,0,0,0,0,0,0], [4,3,0,0,0,0,0,0,0],
+  [4,3,2,0,0,0,0,0,0], [4,3,3,0,0,0,0,0,0], [4,3,3,1,0,0,0,0,0], [4,3,3,2,0,0,0,0,0],
+  [4,3,3,3,1,0,0,0,0], [4,3,3,3,2,0,0,0,0], [4,3,3,3,2,1,0,0,0], [4,3,3,3,2,1,0,0,0],
+  [4,3,3,3,2,1,1,0,0], [4,3,3,3,2,1,1,0,0], [4,3,3,3,2,1,1,1,0], [4,3,3,3,2,1,1,1,0],
+  [4,3,3,3,2,1,1,1,1], [4,3,3,3,3,1,1,1,1], [4,3,3,3,3,2,1,1,1], [4,3,3,3,3,2,2,1,1],
+]
+
+const HALF_SLOTS = [
+  [0,0,0,0,0,0,0,0,0], [2,0,0,0,0,0,0,0,0], [3,0,0,0,0,0,0,0,0], [3,0,0,0,0,0,0,0,0],
+  [4,2,0,0,0,0,0,0,0], [4,2,0,0,0,0,0,0,0], [4,3,0,0,0,0,0,0,0], [4,3,0,0,0,0,0,0,0],
+  [4,3,2,0,0,0,0,0,0], [4,3,2,0,0,0,0,0,0], [4,3,3,0,0,0,0,0,0], [4,3,3,0,0,0,0,0,0],
+  [4,3,3,1,0,0,0,0,0], [4,3,3,1,0,0,0,0,0], [4,3,3,2,0,0,0,0,0], [4,3,3,2,0,0,0,0,0],
+  [4,3,3,3,1,0,0,0,0], [4,3,3,3,1,0,0,0,0], [4,3,3,3,2,0,0,0,0], [4,3,3,3,2,0,0,0,0],
+]
+
+// Warlock pact magic: [slotCount, slotLevel] per character level
+const WARLOCK_PACT = [
+  [1,1],[2,1],[2,2],[2,2],[2,3],[2,3],[2,4],[2,4],[2,5],[2,5],
+  [3,5],[3,5],[3,5],[3,5],[3,5],[3,5],[4,5],[4,5],[4,5],[4,5],
+]
+
+/** Returns an array of 9 slot counts (index 0 = 1st level), or null for non-casters. */
+export function getSpellSlots(className, level) {
+  const idx = Math.min(Math.max(level, 1), 20) - 1
+  if (['bard', 'cleric', 'druid', 'sorcerer', 'wizard'].includes(className)) return FULL_SLOTS[idx]
+  if (['paladin', 'ranger'].includes(className)) return HALF_SLOTS[idx]
+  if (className === 'warlock') {
+    const [count, slotLevel] = WARLOCK_PACT[idx]
+    const result = [0,0,0,0,0,0,0,0,0]
+    result[slotLevel - 1] = count
+    return result
+  }
+  return null
+}
+
 /** @returns {CharacterDraft} */
 export function emptyCharacter() {
   return {
@@ -174,9 +275,12 @@ export function emptyCharacter() {
     gold: 0,
     languages: [],
     equipment: [],
+    weapons: [],
+    spells: [],
     trait: '',
     ideal: '',
     bond: '',
     flaw: '',
+    savedId: null,
   }
 }

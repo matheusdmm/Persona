@@ -1,5 +1,6 @@
 // composables/useApi.js
 const BASE = '/api'
+const OPEN5E = 'https://api.open5e.com'
 
 export function useApi() {
   async function fetchRaces() {
@@ -21,5 +22,18 @@ export function useApi() {
     return res.json()
   }
 
-  return { fetchRaces, fetchClasses, calculateSheet }
+  async function fetchSpells(className) {
+    const name = className.charAt(0).toUpperCase() + className.slice(1)
+    let url = `${OPEN5E}/spells/?dnd_class=${name}&ordering=level_int,name&limit=100`
+    const spells = []
+    while (url) {
+      const res = await fetch(url)
+      const data = await res.json()
+      spells.push(...data.results)
+      url = data.next
+    }
+    return spells
+  }
+
+  return { fetchRaces, fetchClasses, calculateSheet, fetchSpells }
 }

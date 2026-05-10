@@ -12,6 +12,7 @@
       <SkillsStep    v-else-if="store.currentStep === 3" v-model="store.draft" />
       <AbilitiesStep v-else-if="store.currentStep === 4" v-model="store.draft.abilities" />
       <ExtrasStep    v-else-if="store.currentStep === 5" v-model="store.draft" />
+      <SpellsStep    v-else-if="store.currentStep === 6" v-model="store.draft" />
     </div>
 
     <div class="flex justify-between mt-6">
@@ -46,8 +47,9 @@ import ClassSelector from '@/components/character/ClassSelector.vue'
 import SkillsStep    from '@/components/character/SkillsStep.vue'
 import AbilitiesStep from '@/components/character/AbilitiesStep.vue'
 import ExtrasStep    from '@/components/character/ExtrasStep.vue'
+import SpellsStep    from '@/components/character/SpellsStep.vue'
 
-const STEPS = ['Details', 'Race', 'Class', 'Skills', 'Abilities', 'Extras']
+const STEPS = ['Details', 'Race', 'Class', 'Skills', 'Abilities', 'Extras', 'Spells']
 
 const store = useCharacterStore()
 const router = useRouter()

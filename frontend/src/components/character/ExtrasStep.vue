@@ -5,6 +5,33 @@
 
     <div class="space-y-10">
 
+      <!-- Weapons -->
+      <section>
+        <h3 class="text-gold text-xs tracking-widest uppercase font-semibold mb-3 border-b border-stone-700 pb-2">
+          Weapons
+        </h3>
+        <div v-if="!proficientWeapons.length" class="text-stone-500 text-sm italic">
+          No class selected.
+        </div>
+        <div v-else>
+          <div class="mb-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <button
+              v-for="w in proficientWeapons"
+              :key="w.id"
+              @click="toggleWeapon(w.id)"
+              class="text-left px-3 py-2 border rounded-md transition-all duration-150 text-sm"
+              :class="modelValue.weapons?.includes(w.id)
+                ? 'border-gold bg-gold/10 text-parchment'
+                : 'border-stone-700 text-stone-400 hover:border-stone-500 hover:text-stone-300'"
+            >
+              <div class="font-semibold leading-tight">{{ w.name }}</div>
+              <div class="text-xs opacity-70 mt-0.5">{{ w.damage }} {{ w.damageType }}</div>
+            </button>
+          </div>
+          <p class="text-xs text-stone-500">Showing weapons your class is proficient with. Click to equip.</p>
+        </div>
+      </section>
+
       <!-- Gold -->
       <section>
         <h3 class="text-gold text-xs tracking-widest uppercase font-semibold mb-3 border-b border-stone-700 pb-2">
@@ -133,15 +160,29 @@ import { ref, computed, onMounted } from 'vue'
 import {
   ALL_LANGUAGES, RACE_LANGUAGES,
   CLASS_GOLD_ROLLS, CLASS_STARTING_EQUIPMENT,
+  WEAPONS, isProficientWith,
 } from '@/types/index.js'
+import { useCharacterStore } from '@/stores/character.js'
 
 const props = defineProps({
   modelValue: { type: Object, required: true },
 })
 const emit = defineEmits(['update:modelValue'])
+const store = useCharacterStore()
 
 function update(field, value) {
   emit('update:modelValue', { ...props.modelValue, [field]: value })
+}
+
+const proficientWeapons = computed(() => {
+  const profs = store.selectedClass?.weapon_proficiencies ?? []
+  return WEAPONS.filter(w => isProficientWith(w, profs))
+})
+
+function toggleWeapon(id) {
+  const current = props.modelValue.weapons ?? []
+  const next = current.includes(id) ? current.filter(w => w !== id) : [...current, id]
+  update('weapons', next)
 }
 
 onMounted(() => {

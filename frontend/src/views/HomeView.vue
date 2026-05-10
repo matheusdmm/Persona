@@ -1,38 +1,177 @@
 <template>
-  <div class="max-w-4xl mx-auto px-6 py-20 text-center">
-    <div class="text-gold text-6xl mb-6">⚔</div>
-    <h1 class="text-4xl font-body font-semibold text-parchment mb-4 tracking-wide">
-      D&D Character Sheet
-    </h1>
-    <p class="text-stone-400 text-lg mb-3 max-w-xl mx-auto">
-      Build characters for D&D 5e and 5.5e. Choose your race, class, abilities, and background
-      — get a complete character sheet instantly.
-    </p>
-    <p class="text-stone-500 text-sm mb-10">Supports both 5e and 5.5e (2024) rules.</p>
+  <div class="overflow-x-hidden">
 
-    <RouterLink to="/create" class="btn-primary text-base px-8 py-3 inline-block">
-      Create a Character
-    </RouterLink>
+    <!-- ── HERO ── -->
+    <section class="relative max-w-4xl mx-auto px-6 pt-24 pb-20 text-center">
 
-    <div class="mt-20 grid grid-cols-3 gap-6 text-left">
-      <div class="card border-stone-700">
-        <div class="text-gold text-2xl mb-2">🧝</div>
-        <h3 class="text-parchment font-semibold mb-1">Races & Species</h3>
-        <p class="text-stone-400 text-sm">All SRD races with full trait descriptions and ability bonuses.</p>
+      <!-- Ambient glow behind icon -->
+      <div class="absolute inset-0 flex items-start justify-center pt-16 pointer-events-none" aria-hidden="true">
+        <div class="w-80 h-80 rounded-full bg-gold/10 blur-3xl" />
       </div>
-      <div class="card border-stone-700">
-        <div class="text-gold text-2xl mb-2">⚡</div>
-        <h3 class="text-parchment font-semibold mb-1">Auto-calculated Stats</h3>
-        <p class="text-stone-400 text-sm">HP, modifiers, proficiency bonus, and AC calculated automatically.</p>
+
+      <!-- Floating icon -->
+      <div class="hero-icon relative z-10 inline-block text-7xl mb-8 text-gold">⚔</div>
+
+      <!-- Headline -->
+      <h1 class="anim anim-1 font-body text-5xl sm:text-6xl font-semibold text-parchment mb-5 tracking-wide leading-snug">
+        Forge Your Legend
+      </h1>
+
+      <!-- Tagline -->
+      <p class="anim anim-2 font-body text-stone-300 text-xl sm:text-2xl italic mb-4 max-w-lg mx-auto leading-relaxed">
+        "Not all heroes are born.<br class="hidden sm:block" />
+        Most are built — one choice at a time."
+      </p>
+
+      <!-- Description -->
+      <p class="anim anim-3 text-stone-400 text-base mb-10 max-w-md mx-auto leading-relaxed">
+        Pick your race, class, and spells. Set your stats and background.
+        Walk into your next session with a complete, print‑ready character sheet.
+      </p>
+
+      <!-- CTA -->
+      <div class="anim anim-4">
+        <RouterLink to="/create" class="cta-btn inline-flex items-center gap-2.5 px-9 py-4 text-base font-semibold rounded-lg">
+          Begin Your Journey
+          <span class="text-xl leading-none">→</span>
+        </RouterLink>
       </div>
-      <div class="card border-stone-700">
-        <div class="text-gold text-2xl mb-2">📜</div>
-        <h3 class="text-parchment font-semibold mb-1">Export Ready</h3>
-        <p class="text-stone-400 text-sm">Export your character as JSON to use in your favorite VTT.</p>
+
+      <!-- Edition pills -->
+      <div class="anim anim-5 flex justify-center gap-2 mt-6">
+        <span class="text-xs px-2.5 py-0.5 bg-gold/10 text-gold border border-gold/30 rounded-full">5e</span>
+        <span class="text-xs px-2.5 py-0.5 bg-gold/10 text-gold border border-gold/30 rounded-full">5.5e (2024)</span>
       </div>
+    </section>
+
+    <!-- ── DIVIDER ── -->
+    <div class="flex items-center gap-4 max-w-xs mx-auto px-6 mb-14">
+      <div class="flex-1 h-px bg-gradient-to-r from-transparent via-stone-600 to-transparent" />
+      <span class="text-stone-500 text-[10px] tracking-[0.4em] uppercase shrink-0">What you get</span>
+      <div class="flex-1 h-px bg-gradient-to-r from-transparent via-stone-600 to-transparent" />
     </div>
+
+    <!-- ── FEATURES ── -->
+    <section class="max-w-4xl mx-auto px-6 pb-28">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+        <div class="feat feat-1 card border-stone-700 !p-6 group">
+          <div class="feat-icon text-3xl mb-4">🏹</div>
+          <h3 class="text-parchment font-semibold mb-2 text-base">Every Race & Class</h3>
+          <p class="text-stone-400 text-sm leading-relaxed">
+            Human to Dragonborn, Barbarian to Wizard — full SRD coverage
+            with trait descriptions, ability bonuses, and starting gear.
+          </p>
+        </div>
+
+        <div class="feat feat-2 card border-stone-700 !p-6 group">
+          <div class="feat-icon text-3xl mb-4">⚡</div>
+          <h3 class="text-parchment font-semibold mb-2 text-base">Combat Stats, Instant</h3>
+          <p class="text-stone-400 text-sm leading-relaxed">
+            HP, AC, modifiers, saving throws, proficiency bonus —
+            all computed the moment you finish. No spreadsheet required.
+          </p>
+        </div>
+
+        <div class="feat feat-3 card border-stone-700 !p-6 group">
+          <div class="feat-icon text-3xl mb-4">✨</div>
+          <h3 class="text-parchment font-semibold mb-2 text-base">Full Spell Lists</h3>
+          <p class="text-stone-400 text-sm leading-relaxed">
+            Browse and prepare spells filtered to your class and level —
+            with school, casting time, and range, pulled live from Open5e.
+          </p>
+        </div>
+
+        <div class="feat feat-4 card border-stone-700 !p-6 group">
+          <div class="feat-icon text-3xl mb-4">📜</div>
+          <h3 class="text-parchment font-semibold mb-2 text-base">Print & Take It</h3>
+          <p class="text-stone-400 text-sm leading-relaxed">
+            Save characters locally, print a clean A4 sheet, or export
+            JSON for Foundry VTT, Roll20, and any other virtual tabletop.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
   </div>
 </template>
 
 <script setup>
 </script>
+
+<style scoped>
+/* ── Floating sword ── */
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%       { transform: translateY(-14px) rotate(-3deg); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(184, 144, 10, 0.4)); }
+  50%       { filter: drop-shadow(0 0 28px rgba(184, 144, 10, 0.75)); }
+}
+
+.hero-icon {
+  animation: bob 3.6s ease-in-out infinite, glow-pulse 3.6s ease-in-out infinite;
+}
+
+/* ── Fade-up stagger ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.anim {
+  opacity: 0;
+  animation: fadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.anim-1 { animation-delay: 0.05s; }
+.anim-2 { animation-delay: 0.18s; }
+.anim-3 { animation-delay: 0.30s; }
+.anim-4 { animation-delay: 0.42s; }
+.anim-5 { animation-delay: 0.52s; }
+
+/* ── CTA button ── */
+@keyframes shimmer {
+  from { background-position: 200% center; }
+  to   { background-position: -200% center; }
+}
+
+.cta-btn {
+  background: linear-gradient(110deg, #b8900a 0%, #e0b84a 45%, #b8900a 100%);
+  background-size: 250% auto;
+  color: #160808;
+  box-shadow: 0 0 24px rgba(184, 144, 10, 0.25);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.cta-btn:hover {
+  animation: shimmer 1.8s linear infinite;
+  box-shadow: 0 0 40px rgba(184, 144, 10, 0.55);
+  transform: translateY(-2px);
+}
+
+/* ── Feature cards ── */
+.feat {
+  opacity: 0;
+  animation: fadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.feat-1 { animation-delay: 0.55s; }
+.feat-2 { animation-delay: 0.65s; }
+.feat-3 { animation-delay: 0.75s; }
+.feat-4 { animation-delay: 0.85s; }
+
+.feat:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px -4px rgba(30, 0, 14, 0.16), 0 2px 6px rgba(30, 0, 14, 0.08);
+}
+
+.feat-icon {
+  transition: transform 0.3s ease;
+}
+.feat:hover .feat-icon {
+  transform: scale(1.15);
+}
+</style>

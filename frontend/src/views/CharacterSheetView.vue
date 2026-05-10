@@ -4,7 +4,7 @@
       No character data. <RouterLink to="/create" class="text-gold underline">Create one</RouterLink>.
     </div>
 
-    <div v-else class="space-y-5">
+    <div v-else id="sheet-content" class="space-y-5">
 
       <!-- ── HEADER ── -->
       <div class="card !p-5 flex items-start justify-between gap-6 flex-wrap">
@@ -39,6 +39,17 @@
         <div class="flex gap-2 shrink-0 no-print">
           <button class="btn-secondary text-sm" @click="exportJSON">Export JSON</button>
           <button class="btn-secondary text-sm" @click="savePDF">Save as PDF</button>
+          <button
+            class="btn-secondary text-sm flex items-center gap-1.5"
+            :class="store.isSaved ? 'text-gold border-gold' : ''"
+            @click="toggleSave"
+          >
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path v-if="store.isSaved" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              <path v-else d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            {{ store.isSaved ? 'Saved' : 'Save' }}
+          </button>
           <RouterLink to="/create" class="btn-primary text-sm">New Character</RouterLink>
         </div>
       </div>
@@ -93,7 +104,7 @@
           <!-- Skills -->
           <div class="card !p-4">
             <h2 class="section-title">Skills</h2>
-            <ul class="space-y-1 skills-print-list">
+            <ul class="space-y-1">
               <li v-for="skill in skills" :key="skill.name" class="flex items-center gap-1.5 text-xs">
                 <span
                   class="w-2.5 h-2.5 rounded-full border-2 shrink-0"
@@ -180,6 +191,35 @@
                 {{ formatMod(store.sheet.proficiency_bonus) }}
               </span>
             </div>
+          </div>
+
+          <!-- Attacks -->
+          <div v-if="attacks.length" class="card !p-4">
+            <h2 class="section-title">Attacks</h2>
+            <table class="w-full text-xs">
+              <thead>
+                <tr class="text-stone-500 uppercase tracking-wider border-b border-stone-700">
+                  <th class="text-left pb-1 font-semibold">Weapon</th>
+                  <th class="text-center pb-1 font-semibold w-16">Bonus</th>
+                  <th class="text-center pb-1 font-semibold w-20">Damage</th>
+                  <th class="text-left pb-1 font-semibold">Type</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-stone-700">
+                <tr v-for="atk in attacks" :key="atk.name" class="text-parchment">
+                  <td class="py-1.5 pr-2 font-semibold">
+                    {{ atk.name }}
+                    <span v-if="!atk.proficient" class="text-stone-500 font-normal"> *</span>
+                  </td>
+                  <td class="py-1.5 text-center font-bold" :class="atk.attackBonus >= 0 ? 'text-vivid' : 'text-red-500'">
+                    {{ formatMod(atk.attackBonus) }}
+                  </td>
+                  <td class="py-1.5 text-center text-gold font-semibold">{{ atk.damageStr }}</td>
+                  <td class="py-1.5 text-stone-400 capitalize">{{ atk.damageType }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <p v-if="attacks.some(a => !a.proficient)" class="text-stone-500 text-[10px] mt-2">* not proficient — no proficiency bonus to attack</p>
           </div>
 
           <!-- Death Saves -->
@@ -319,6 +359,71 @@
 
         </div>
       </div>
+
+      <!-- ── SPELLS ── -->
+      <div v-if="isSpellcaster && store.sheet" class="card !p-4">
+        <h2 class="section-title">Spells</h2>
+
+        <!-- Header stats -->
+        <div class="flex flex-wrap gap-6 mb-4">
+          <div>
+            <p class="text-[10px] text-stone-400 uppercase tracking-widest mb-0.5">Spell Save DC</p>
+            <p class="text-3xl font-bold text-parchment">{{ spellSaveDC }}</p>
+          </div>
+          <div>
+            <p class="text-[10px] text-stone-400 uppercase tracking-widest mb-0.5">Spell Attack</p>
+            <p class="text-3xl font-bold" :class="spellAttackBonus >= 0 ? 'text-parchment' : 'text-red-500'">
+              {{ formatMod(spellAttackBonus) }}
+            </p>
+          </div>
+          <div class="self-end mb-1">
+            <p class="text-xs text-stone-500 capitalize">
+              via <strong class="text-stone-400">{{ SPELLCASTING_ABILITY[store.draft.class] }}</strong>
+              <template v-if="store.draft.class === 'warlock'">
+                &nbsp;·&nbsp;<span class="text-gold/80">Pact Magic (short rest)</span>
+              </template>
+            </p>
+          </div>
+        </div>
+
+        <!-- Spell slots -->
+        <div v-if="spellSlots && spellSlots.some(s => s > 0)" class="mb-4">
+          <p class="text-[10px] text-stone-400 uppercase tracking-widest mb-2">Spell Slots</p>
+          <div class="flex flex-wrap gap-4">
+            <div v-for="(count, i) in spellSlots" :key="i" v-show="count > 0">
+              <p class="text-[10px] text-stone-500 mb-1 text-center">{{ SPELL_LEVEL_LABELS[i + 1] }}</p>
+              <div class="flex gap-1">
+                <div v-for="j in count" :key="j"
+                  class="w-4 h-4 rounded-full border-2 border-stone-500" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected spells -->
+        <div v-if="selectedSpells.length">
+          <p class="text-[10px] text-stone-400 uppercase tracking-widest mb-3">Known Spells</p>
+          <div v-for="[level, spells] in spellsByLevel" :key="level" class="mb-4">
+            <p class="text-xs font-semibold text-gold mb-2 uppercase tracking-wide">
+              {{ level === 0 ? 'Cantrips' : SPELL_LEVEL_LABELS[level] + ' Level' }}
+            </p>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1.5">
+              <div v-for="spell in spells" :key="spell.slug" class="text-sm">
+                <span class="text-parchment font-medium">{{ spell.name }}</span>
+                <span v-if="spell.components" class="text-stone-500 text-xs ml-1">
+                  ({{ spell.components }})
+                </span>
+                <div v-if="spell.casting_time || spell.range" class="text-[10px] text-stone-600 leading-tight">
+                  {{ [spell.casting_time, spell.range].filter(Boolean).join(' · ') }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p v-else class="text-stone-500 text-sm italic">No spells selected.</p>
+      </div>
+
     </div>
   </div>
 </template>
@@ -326,7 +431,12 @@
 <script setup>
 import { computed } from 'vue'
 import { useCharacterStore } from '@/stores/character.js'
-import { ABILITY_NAMES, ABILITY_LABELS, SKILL_MAP } from '@/types/index.js'
+import {
+  ABILITY_NAMES, ABILITY_LABELS, SKILL_MAP, WEAPONS, isProficientWith,
+  SPELLCASTING_CLASSES, SPELLCASTING_ABILITY, getSpellSlots,
+} from '@/types/index.js'
+
+const SPELL_LEVEL_LABELS = ['Cantrip', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th']
 
 const store = useCharacterStore()
 
@@ -364,6 +474,27 @@ const hpBreakdown = computed(() => {
   return { hitDie, conMod, level, avgPerLevel, perLevel, level1HP, additionalLevels, additionalHP: perLevel * additionalLevels }
 })
 
+const attacks = computed(() => {
+  if (!store.sheet || !store.selectedClass) return []
+  const mods = store.sheet.modifiers
+  const prof = store.sheet.proficiency_bonus
+  const profs = store.selectedClass.weapon_proficiencies
+
+  return (store.draft.weapons ?? []).map(id => {
+    const w = WEAPONS.find(x => x.id === id)
+    if (!w) return null
+    const proficient = isProficientWith(w, profs)
+    const abilityMod = w.ranged
+      ? mods.dexterity
+      : w.finesse
+        ? Math.max(mods.strength, mods.dexterity)
+        : mods.strength
+    const attackBonus = abilityMod + (proficient ? prof : 0)
+    const damageStr = abilityMod === 0 ? w.damage : `${w.damage} ${formatMod(abilityMod)}`
+    return { name: w.name, attackBonus, damageStr, damageType: w.damageType, proficient }
+  }).filter(Boolean)
+})
+
 const createdDate = computed(() => {
   if (!store.draft.createdAt) return ''
   return new Date(store.draft.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
@@ -376,8 +507,43 @@ const personalityFields = [
   { key: 'flaw',  label: 'Flaw' },
 ]
 
+const isSpellcaster = computed(() => SPELLCASTING_CLASSES.has(store.draft.class))
+
+const spellSlots = computed(() => {
+  if (!isSpellcaster.value || !store.sheet) return null
+  return getSpellSlots(store.draft.class, store.sheet.input.level)
+})
+
+const spellSaveDC = computed(() => {
+  if (!store.sheet || !isSpellcaster.value) return 0
+  const ability = SPELLCASTING_ABILITY[store.draft.class]
+  return 8 + store.sheet.proficiency_bonus + store.sheet.modifiers[ability]
+})
+
+const spellAttackBonus = computed(() => {
+  if (!store.sheet || !isSpellcaster.value) return 0
+  const ability = SPELLCASTING_ABILITY[store.draft.class]
+  return store.sheet.proficiency_bonus + store.sheet.modifiers[ability]
+})
+
+const selectedSpells = computed(() => store.draft.spells ?? [])
+
+const spellsByLevel = computed(() => {
+  const grouped = new Map()
+  for (const spell of selectedSpells.value) {
+    if (!grouped.has(spell.level)) grouped.set(spell.level, [])
+    grouped.get(spell.level).push(spell)
+  }
+  return [...grouped.entries()].sort(([a], [b]) => a - b)
+})
+
 function formatMod(n) {
   return n >= 0 ? `+${n}` : `${n}`
+}
+
+function toggleSave() {
+  if (store.isSaved) store.unsaveCharacter(store.draft.savedId)
+  else store.saveCharacter()
 }
 
 function savePDF() {
