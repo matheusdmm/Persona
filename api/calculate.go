@@ -39,7 +39,7 @@ func proficiencyBonus(level int) int {
 	return (level-1)/4 + 2
 }
 
-func CalculateHandler(w http.ResponseWriter, r *http.Request) {
+func Handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
