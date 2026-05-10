@@ -49,7 +49,7 @@
           />
           <span class="text-stone-400">gp</span>
           <button v-if="goldFormula" @click="rollGold" class="btn-secondary text-sm px-3 py-2">
-            🎲 Roll {{ goldFormula }}
+            Roll {{ goldFormula }}
           </button>
         </div>
       </section>

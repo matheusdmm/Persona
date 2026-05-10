@@ -10,7 +10,16 @@
       </div>
 
       <!-- Floating icon -->
-      <div class="hero-icon relative z-10 inline-block text-7xl mb-8 text-gold">⚔</div>
+      <div class="hero-icon relative z-10 mb-8 text-gold w-20 h-20 mx-auto">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+          <path d="M14.5 17.5L3 6V3h3l11.5 11.5"/>
+          <path d="M13 19l6-6"/>
+          <path d="M16 16l4 4"/>
+          <path d="M19 21l2-2"/>
+          <path d="M9.5 6.5L5 11"/>
+          <path d="M3 3l3 3"/>
+        </svg>
+      </div>
 
       <!-- Headline -->
       <h1 class="anim anim-1 font-body text-5xl sm:text-6xl font-semibold text-parchment mb-5 tracking-wide leading-snug">
@@ -56,7 +65,11 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
         <div class="feat feat-1 card border-stone-700 !p-6 group">
-          <div class="feat-icon text-3xl mb-4">🏹</div>
+          <div class="feat-icon mb-4 text-gold">
+            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
           <h3 class="text-parchment font-semibold mb-2 text-base">Every Race & Class</h3>
           <p class="text-stone-400 text-sm leading-relaxed">
             Human to Dragonborn, Barbarian to Wizard — full SRD coverage
@@ -65,7 +78,11 @@
         </div>
 
         <div class="feat feat-2 card border-stone-700 !p-6 group">
-          <div class="feat-icon text-3xl mb-4">⚡</div>
+          <div class="feat-icon mb-4 text-gold">
+            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
           <h3 class="text-parchment font-semibold mb-2 text-base">Combat Stats, Instant</h3>
           <p class="text-stone-400 text-sm leading-relaxed">
             HP, AC, modifiers, saving throws, proficiency bonus —
@@ -74,7 +91,12 @@
         </div>
 
         <div class="feat feat-3 card border-stone-700 !p-6 group">
-          <div class="feat-icon text-3xl mb-4">✨</div>
+          <div class="feat-icon mb-4 text-gold">
+            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+          </div>
           <h3 class="text-parchment font-semibold mb-2 text-base">Full Spell Lists</h3>
           <p class="text-stone-400 text-sm leading-relaxed">
             Browse and prepare spells filtered to your class and level —
@@ -83,7 +105,15 @@
         </div>
 
         <div class="feat feat-4 card border-stone-700 !p-6 group">
-          <div class="feat-icon text-3xl mb-4">📜</div>
+          <div class="feat-icon mb-4 text-gold">
+            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <line x1="10" y1="9" x2="8" y2="9"/>
+            </svg>
+          </div>
           <h3 class="text-parchment font-semibold mb-2 text-base">Print & Take It</h3>
           <p class="text-stone-400 text-sm leading-relaxed">
             Save characters locally, print a clean A4 sheet, or export

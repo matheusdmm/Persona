@@ -53,7 +53,7 @@
             class="px-2 py-0.5 text-xs border border-stone-600 text-stone-400
                    rounded hover:border-gold hover:text-gold transition-all duration-150"
           >
-            🎲 roll
+            Roll
           </button>
           <div v-if="rollResults[ability]" class="flex gap-1 text-xs">
             <span
