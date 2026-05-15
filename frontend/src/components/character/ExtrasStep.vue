@@ -141,48 +141,43 @@
             @update:model-value="toggleExtItems"
           />
 
-          <Combobox v-if="extItemsOn" @update:modelValue="addExtItem" nullable class="mt-2">
-            <ComboboxInput
+          <div v-if="extItemsOn" class="mt-2">
+            <input
+              v-model="extItemSearch"
+              type="text"
               placeholder="Search WotC items…"
-              :displayValue="() => extItemSearch"
-              @change="extItemSearch = $event.target.value"
               class="w-full bg-stone-800 border border-stone-600 text-parchment px-3 py-2
                      focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20
                      placeholder-stone-500 rounded-md shadow-input text-sm transition-shadow"
             />
-            <ComboboxOptions
+            <ul
               v-if="filteredExtItems.length"
               class="mt-1 max-h-64 overflow-y-auto rounded-md border border-stone-700 divide-y divide-stone-800 bg-stone-900 shadow-xl"
             >
-              <ComboboxOption
+              <li
                 v-for="item in filteredExtItems"
                 :key="item.name"
-                :value="item"
-                v-slot="{ active }"
+                @mousedown.prevent="addExtItem(item)"
+                class="px-3 py-2.5 cursor-pointer transition-colors hover:bg-stone-800 hover:text-parchment text-stone-300"
               >
-                <div
-                  class="px-3 py-2.5 cursor-pointer transition-colors"
-                  :class="active ? 'bg-stone-800 text-parchment' : 'text-stone-300'"
-                >
-                  <div class="text-sm font-medium leading-tight">{{ item.name }}</div>
-                  <div class="flex flex-wrap gap-x-2 mt-0.5">
-                    <span v-if="item.damage && item.damageType" class="text-xs text-gold/80">
-                      {{ item.damage }} {{ item.damageType }}
-                    </span>
-                    <span v-else-if="item.armorClass" class="text-xs text-gold/80">
-                      AC {{ item.armorClass }}<span v-if="item.armorType"> · {{ item.armorType }}</span>
-                    </span>
-                    <span v-if="item.weaponProps" class="text-xs text-stone-500">{{ item.weaponProps }}</span>
-                    <span v-if="item.cost" class="text-xs text-stone-500">{{ item.cost }}</span>
-                    <span v-if="!item.damage && !item.armorClass && !item.cost && item.category" class="text-xs text-stone-500">{{ item.category }}</span>
-                  </div>
+                <div class="text-sm font-medium leading-tight">{{ item.name }}</div>
+                <div class="flex flex-wrap gap-x-2 mt-0.5">
+                  <span v-if="item.damage && item.damageType" class="text-xs text-gold/80">
+                    {{ item.damage }} {{ item.damageType }}
+                  </span>
+                  <span v-else-if="item.armorClass" class="text-xs text-gold/80">
+                    AC {{ item.armorClass }}<span v-if="item.armorType"> · {{ item.armorType }}</span>
+                  </span>
+                  <span v-if="item.weaponProps" class="text-xs text-stone-500">{{ item.weaponProps }}</span>
+                  <span v-if="item.cost" class="text-xs text-stone-500">{{ item.cost }}</span>
+                  <span v-if="!item.damage && !item.armorClass && !item.cost && item.category" class="text-xs text-stone-500">{{ item.category }}</span>
                 </div>
-              </ComboboxOption>
-            </ComboboxOptions>
+              </li>
+            </ul>
             <p v-else-if="extItemSearch.trim()" class="mt-1 text-xs text-stone-500">
               No items match "{{ extItemSearch }}"
             </p>
-          </Combobox>
+          </div>
         </div>
       </section>
 
@@ -213,9 +208,6 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import {
-  Combobox, ComboboxInput, ComboboxOptions, ComboboxOption,
-} from '@headlessui/vue'
 import ExtendedToggle from '@/components/ui/ExtendedToggle.vue'
 import {
   ALL_LANGUAGES, RACE_LANGUAGES,

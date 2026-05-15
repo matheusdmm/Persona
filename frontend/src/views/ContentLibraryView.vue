@@ -67,7 +67,7 @@
 
   <!-- ── Modal (HeadlessUI Dialog) ── -->
   <TransitionRoot :show="!!selected" as="template">
-    <Dialog @close="close" class="relative z-50">
+    <Dialog :open="!!selected" @close="close" class="relative z-50">
 
       <!-- Backdrop -->
       <TransitionChild
@@ -147,6 +147,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import {
   Dialog, DialogPanel, DialogTitle,
   TransitionRoot, TransitionChild,
@@ -171,6 +172,8 @@ const { entries, loading, error, load } = useExtendedData()
 function select(key) { active.value = key; load(key) }
 function open(item)  { selected.value = item }
 function close()     { selected.value = null }
+
+onBeforeRouteLeave(() => { selected.value = null })
 
 function formatKey(key) {
   return key.replace(/^data-/i, '').replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase())

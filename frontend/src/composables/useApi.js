@@ -2,21 +2,28 @@
 const BASE = '/api'
 const OPEN5E = 'https://api.open5e.com'
 
+function fetchWithTimeout(url, options = {}, ms = 8000) {
+  const controller = new AbortController()
+  const id = setTimeout(() => controller.abort(), ms)
+  return fetch(url, { ...options, signal: controller.signal })
+    .finally(() => clearTimeout(id))
+}
+
 export function useApi() {
   async function fetchRaces() {
-    const res = await fetch(`${BASE}/races`)
+    const res = await fetchWithTimeout(`${BASE}/races`)
     if (!res.ok) throw new Error(`Failed to fetch races: ${res.status}`)
     return res.json()
   }
 
   async function fetchClasses() {
-    const res = await fetch(`${BASE}/classes`)
+    const res = await fetchWithTimeout(`${BASE}/classes`)
     if (!res.ok) throw new Error(`Failed to fetch classes: ${res.status}`)
     return res.json()
   }
 
   async function calculateSheet(characterInput) {
-    const res = await fetch(`${BASE}/calculate`, {
+    const res = await fetchWithTimeout(`${BASE}/calculate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(characterInput),

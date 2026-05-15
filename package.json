@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "backend": "cd server && go run .",
+    "frontend": "npm --prefix frontend run dev",
+    "test": "npm --prefix frontend test",
+    "build": "npm --prefix frontend run build",
+    "install:frontend": "npm --prefix frontend install"
+  }
+}

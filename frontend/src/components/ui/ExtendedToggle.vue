@@ -1,7 +1,7 @@
 <template>
-  <Switch
-    :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
+  <button
+    type="button"
+    @click="!loading && $emit('update:modelValue', !modelValue)"
     :disabled="loading"
     class="flex items-center gap-1 text-xs transition-colors disabled:opacity-50
            focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 rounded"
@@ -19,11 +19,10 @@
       <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
     </svg>
     <span>{{ loading ? 'Loading…' : modelValue ? `${label} on` : label }}</span>
-  </Switch>
+  </button>
 </template>
 
 <script setup>
-import { Switch } from '@headlessui/vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 
 defineProps({
