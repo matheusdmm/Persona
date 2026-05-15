@@ -12,6 +12,13 @@
         <RouterLink to="/" class="text-stone-400 hover:text-parchment transition-colors text-sm">
           Home
         </RouterLink>
+        <RouterLink to="/library" class="flex items-center gap-1.5 text-stone-400 hover:text-parchment transition-colors text-sm">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+          Library
+        </RouterLink>
         <RouterLink to="/saved" class="flex items-center gap-1.5 text-stone-400 hover:text-parchment transition-colors text-sm">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -86,6 +93,14 @@
         <RouterLink to="/" @click="close"
           class="py-3.5 text-stone-300 hover:text-parchment transition-colors border-b border-stone-800 text-sm">
           Home
+        </RouterLink>
+        <RouterLink to="/library" @click="close"
+          class="py-3.5 flex items-center gap-2 text-stone-300 hover:text-parchment transition-colors border-b border-stone-800 text-sm">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+          Library
         </RouterLink>
         <RouterLink to="/saved" @click="close"
           class="py-3.5 flex items-center gap-2 text-stone-300 hover:text-parchment transition-colors border-b border-stone-800 text-sm">

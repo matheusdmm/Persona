@@ -3,6 +3,7 @@ import HomeView             from '@/views/HomeView.vue'
 import CharacterCreatorView from '@/views/CharacterCreatorView.vue'
 import CharacterSheetView   from '@/views/CharacterSheetView.vue'
 import SavedCharactersView  from '@/views/SavedCharactersView.vue'
+import ContentLibraryView   from '@/views/ContentLibraryView.vue'
 
 const BASE_TITLE = 'HeroScribe'
 const BASE_DESC  = 'Free D&D 5e and 5.5e character creator. Race, class, spells, and gear — complete print-ready sheet in minutes.'
@@ -40,6 +41,14 @@ const router = createRouter({
       meta: {
         title: `Saved Characters — ${BASE_TITLE}`,
         description: 'Browse and manage your saved D&D characters. Load any character sheet instantly.',
+      },
+    },
+    {
+      path: '/library',
+      component: ContentLibraryView,
+      meta: {
+        title: `Content Library — ${BASE_TITLE}`,
+        description: 'Browse official D&D 5e content: backgrounds, species, classes, spells, and items from Wizards of the Coast.',
       },
     },
   ],
