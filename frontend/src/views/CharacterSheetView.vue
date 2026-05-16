@@ -15,6 +15,9 @@
           <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-sm">
             <span class="capitalize font-semibold text-crimson">
               {{ store.sheet.input.class }} {{ store.sheet.input.level }}
+              <span v-if="store.draft.subclass" class="text-stone-400 font-normal">
+                · {{ selectedSubclassName }}
+              </span>
             </span>
             <span class="text-stone-600">·</span>
             <span class="text-stone-400 capitalize">{{ store.sheet.input.race }}</span>
@@ -452,6 +455,10 @@ import { buildShareUrl } from '@/composables/useShare'
 
 const store = useCharacterStore()
 const copied = ref(false)
+
+const selectedSubclassName = computed(() =>
+  store.selectedClass?.subclasses?.find(s => s.id === store.draft.subclass)?.name ?? ''
+)
 
 async function shareCharacter() {
   const url = buildShareUrl(store.draft)

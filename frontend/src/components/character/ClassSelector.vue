@@ -26,7 +26,7 @@
         :key="cls.id"
         clickable
         :selected="selected === cls.id"
-        @click="$emit('update:selected', cls.id)"
+        @click="onClassClick(cls.id)"
       >
         <div class="font-semibold text-parchment">{{ cls.name }}</div>
         <div class="text-xs text-stone-400 mt-1">
@@ -71,6 +71,30 @@
             {{ selectedClass.armor_proficiencies.join(', ') || 'None' }}
           </span>
         </div>
+
+        <!-- Subclass picker -->
+        <div v-if="selectedClass.subclasses?.length" class="mt-4 pt-4 border-t border-stone-700">
+          <div v-if="availableSubclasses.length">
+            <h4 class="text-sm font-semibold text-parchment mb-3">Choose your Subclass</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button
+                v-for="sub in availableSubclasses"
+                :key="sub.id"
+                class="text-left p-3 rounded-lg border transition-all duration-150"
+                :class="selectedSubclass === sub.id
+                  ? 'border-gold bg-gold/10 text-parchment'
+                  : 'border-stone-600 text-stone-300 hover:border-stone-500 hover:bg-stone-700/50'"
+                @click="$emit('update:selectedSubclass', selectedSubclass === sub.id ? '' : sub.id)"
+              >
+                <div class="font-medium text-sm">{{ sub.name }}</div>
+                <div class="text-xs text-stone-400 mt-1 leading-snug">{{ sub.description }}</div>
+              </button>
+            </div>
+          </div>
+          <div v-else class="text-sm text-stone-500 italic">
+            Subclass unlocked at level {{ selectedClass.subclasses[0].level_gained }}
+          </div>
+        </div>
       </div>
     </Transition>
   </div>
@@ -84,9 +108,14 @@ import type { DnDClass } from '@/types/models'
 const props = withDefaults(defineProps<{
   classes: DnDClass[]
   selected?: string
-}>(), { selected: '' })
+  selectedSubclass?: string
+  level?: number
+}>(), { selected: '', selectedSubclass: '', level: 1 })
 
-defineEmits<{ 'update:selected': [string] }>()
+const emit = defineEmits<{
+  'update:selected': [string]
+  'update:selectedSubclass': [string]
+}>()
 
 const filter = ref('all')
 const editions = [
@@ -101,6 +130,15 @@ const filteredClasses = computed(() => {
 })
 
 const selectedClass = computed(() => props.classes.find(c => c.id === props.selected))
+
+const availableSubclasses = computed(() =>
+  selectedClass.value?.subclasses.filter(s => props.level >= s.level_gained) ?? []
+)
+
+function onClassClick(classId: string) {
+  if (classId !== props.selected) emit('update:selectedSubclass', '')
+  emit('update:selected', classId)
+}
 </script>
 
 <style scoped>

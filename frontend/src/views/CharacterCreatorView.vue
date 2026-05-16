@@ -10,7 +10,7 @@
     <div v-else class="bg-stone-900 rounded-2xl border border-stone-700 p-8 shadow-card">
       <DetailsStep   v-if="store.currentStep === 0" v-model="store.draft" />
       <RaceSelector  v-else-if="store.currentStep === 1" :races="store.races" v-model:selected="store.draft.race" />
-      <ClassSelector v-else-if="store.currentStep === 2" :classes="store.classes" v-model:selected="store.draft.class" />
+      <ClassSelector v-else-if="store.currentStep === 2" :classes="store.classes" :level="store.draft.level" v-model:selected="store.draft.class" v-model:selectedSubclass="store.draft.subclass" />
       <SkillsStep    v-else-if="store.currentStep === 3" v-model="store.draft" />
       <AbilitiesStep v-else-if="store.currentStep === 4" v-model="store.draft.abilities" />
       <ExtrasStep    v-else-if="store.currentStep === 5" v-model="store.draft" />
