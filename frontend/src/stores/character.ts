@@ -2,15 +2,16 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { emptyCharacter } from '@/types'
 import { useApi } from '@/composables/useApi'
-import type { Race, DnDClass, CharacterDraft, CharacterSheet, Spell, SavedEntry } from '@/types/models'
+import type { Race, DnDClass, CharacterDraft, CharacterSheet, Spell, SavedEntry, ArmorItem } from '@/types/models'
 
 export const useCharacterStore = defineStore('character', () => {
-  const { fetchRaces, fetchClasses, calculateSheet, fetchSpells } = useApi()
+  const { fetchRaces, fetchClasses, fetchArmor, calculateSheet, fetchSpells } = useApi()
 
   // State
   const draft          = ref<CharacterDraft>(emptyCharacter())
   const races          = ref<Race[]>([])
   const classes        = ref<DnDClass[]>([])
+  const armors         = ref<ArmorItem[]>([])
   const sheet          = ref<CharacterSheet | null>(null)
   const currentStep    = ref(0)
   const loading        = ref(false)
@@ -35,7 +36,7 @@ export const useCharacterStore = defineStore('character', () => {
   async function loadData(): Promise<void> {
     loading.value = true
     try {
-      ;[races.value, classes.value] = await Promise.all([fetchRaces(), fetchClasses()])
+      ;[races.value, classes.value, armors.value] = await Promise.all([fetchRaces(), fetchClasses(), fetchArmor()])
     } catch {
       error.value = 'Failed to load game data'
     } finally {
@@ -53,6 +54,8 @@ export const useCharacterStore = defineStore('character', () => {
         level:      draft.value.level,
         abilities:  draft.value.abilities,
         background: draft.value.background,
+        armor:      draft.value.armor,
+        shield:     draft.value.shield,
       })
     } catch {
       error.value = 'Failed to calculate character'
@@ -125,7 +128,7 @@ export const useCharacterStore = defineStore('character', () => {
   }
 
   return {
-    draft, races, classes, sheet, currentStep, loading, error, savedCharacters,
+    draft, races, classes, armors, sheet, currentStep, loading, error, savedCharacters,
     availableSpells, spellsLoading,
     selectedRace, selectedClass, isComplete, isSaved,
     loadData, calculate, nextStep, prevStep, reset,

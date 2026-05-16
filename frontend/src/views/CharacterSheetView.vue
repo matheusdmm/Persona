@@ -466,9 +466,11 @@ const skills = computed(() => {
   })
 })
 
-const passivePerception = computed(() =>
-  store.sheet ? 10 + store.sheet.modifiers.wisdom : 10
-)
+const passivePerception = computed(() => {
+  if (!store.sheet) return 10
+  const isPerceptionProficient = store.draft.skills?.includes('perception') ?? false
+  return 10 + store.sheet.modifiers.wisdom + (isPerceptionProficient ? store.sheet.proficiency_bonus : 0)
+})
 
 const hpBreakdown = computed(() => {
   if (!store.sheet || !store.selectedClass) return null

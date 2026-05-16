@@ -30,7 +30,7 @@
       <!-- Description -->
       <p class="anim anim-3 text-stone-400 text-base mb-10 max-w-md mx-auto leading-relaxed">
         Pick your race, class, and spells. Set your stats and background.
-        Walk into your next session with a complete, print‑ready character sheet.
+        Walk into your next session with a complete, print-ready character sheet.
       </p>
 
       <!-- CTA -->

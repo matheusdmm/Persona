@@ -1,4 +1,4 @@
-import type { Race, DnDClass, CharacterInput, CharacterSheet, Spell } from '@/types/models'
+import type { Race, DnDClass, CharacterInput, CharacterSheet, Spell, ArmorItem } from '@/types/models'
 
 const BASE = '/api'
 const OPEN5E = 'https://api.open5e.com'
@@ -20,6 +20,12 @@ export function useApi() {
   async function fetchClasses(): Promise<DnDClass[]> {
     const res = await fetchWithTimeout(`${BASE}/classes`)
     if (!res.ok) throw new Error(`Failed to fetch classes: ${res.status}`)
+    return res.json()
+  }
+
+  async function fetchArmor(): Promise<ArmorItem[]> {
+    const res = await fetchWithTimeout(`${BASE}/armor`)
+    if (!res.ok) throw new Error(`Failed to fetch armor: ${res.status}`)
     return res.json()
   }
 
@@ -53,5 +59,5 @@ export function useApi() {
     return spells
   }
 
-  return { fetchRaces, fetchClasses, calculateSheet, fetchSpells }
+  return { fetchRaces, fetchClasses, fetchArmor, calculateSheet, fetchSpells }
 }

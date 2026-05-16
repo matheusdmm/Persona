@@ -72,6 +72,8 @@ export interface CharacterInput {
   level: number
   abilities: AbilityScores
   background: string
+  armor: string
+  shield: boolean
 }
 
 export interface CharacterDraft {
@@ -90,6 +92,8 @@ export interface CharacterDraft {
   languages: string[]
   equipment: string[]
   weapons: string[]
+  armor: string
+  shield: boolean
   spells: SelectedSpell[]
   trait: string
   ideal: string
@@ -122,6 +126,14 @@ export interface Weapon {
   damageType: string
   ranged: boolean
   finesse: boolean
+}
+
+export interface ArmorItem {
+  id: string
+  name: string
+  type: 'light' | 'medium' | 'heavy'
+  base: number
+  proficiency: 'light' | 'medium' | 'heavy'
 }
 
 export interface SkillEntry {

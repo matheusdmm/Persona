@@ -4,12 +4,14 @@
   "functions": {
     "api/calculate.go": { "maxDuration": 10 },
     "api/classes.go": { "maxDuration": 10 },
-    "api/races.go": { "maxDuration": 10 }
+    "api/races.go": { "maxDuration": 10 },
+    "api/armor.go": { "maxDuration": 10 }
   },
   "rewrites": [
     { "source": "/api/classes", "destination": "/api/classes.go" },
     { "source": "/api/races", "destination": "/api/races.go" },
     { "source": "/api/calculate", "destination": "/api/calculate.go" },
+    { "source": "/api/armor", "destination": "/api/armor.go" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

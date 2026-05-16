@@ -1,7 +1,8 @@
 {
   "name": "dnd-character-creator",
-  "version": "0.1.0",
+  "version": "1.7.2",
   "private": true,
+  "author": "Matheus da Fonseca Dummer",
   "type": "module",
   "scripts": {
     "dev": "vite",

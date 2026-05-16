@@ -32,6 +32,60 @@
         </div>
       </section>
 
+      <!-- Armor -->
+      <section>
+        <h3 class="text-gold text-xs tracking-widest uppercase font-semibold mb-3 border-b border-stone-700 pb-2">
+          Armor
+        </h3>
+
+        <div v-if="!modelValue.class" class="text-stone-500 text-sm italic">No class selected.</div>
+
+        <div v-else class="space-y-3">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <button
+              @click="selectArmor('')"
+              class="text-left px-3 py-2 border rounded-md transition-all duration-150 text-sm"
+              :class="!modelValue.armor
+                ? 'border-gold bg-gold/10 text-parchment'
+                : 'border-stone-700 text-stone-400 hover:border-stone-500 hover:text-stone-300'"
+            >
+              <div class="font-semibold leading-tight">Unarmored</div>
+              <div class="text-xs opacity-70 mt-0.5">{{ unarmoredLabel }}</div>
+            </button>
+
+            <button
+              v-for="a in proficientArmor"
+              :key="a.id"
+              @click="selectArmor(a.id)"
+              class="text-left px-3 py-2 border rounded-md transition-all duration-150 text-sm"
+              :class="modelValue.armor === a.id
+                ? 'border-gold bg-gold/10 text-parchment'
+                : 'border-stone-700 text-stone-400 hover:border-stone-500 hover:text-stone-300'"
+            >
+              <div class="font-semibold leading-tight">{{ a.name }}</div>
+              <div class="text-xs opacity-70 mt-0.5">AC {{ a.base }} · {{ a.type }}</div>
+            </button>
+          </div>
+
+          <div v-if="hasShieldProficiency">
+            <button
+              @click="toggleShield"
+              class="px-3 py-2 border rounded-md transition-all duration-150 text-sm"
+              :class="modelValue.shield
+                ? 'border-gold bg-gold/10 text-parchment'
+                : 'border-stone-700 text-stone-400 hover:border-stone-500 hover:text-stone-300'"
+            >
+              <span class="font-semibold">Shield</span>
+              <span class="text-xs opacity-70 ml-1.5">+2 AC</span>
+            </button>
+          </div>
+
+          <p class="text-xs text-stone-500">
+            Estimated AC: <strong class="text-stone-300">{{ acPreview }}</strong>
+          </p>
+        </div>
+      </section>
+
       <!-- Gold -->
       <section>
         <h3 class="text-gold text-xs tracking-widest uppercase font-semibold mb-3 border-b border-stone-700 pb-2">
@@ -230,6 +284,60 @@ const proficientWeapons = computed(() => {
   const profs = store.selectedClass?.weapon_proficiencies ?? []
   return WEAPONS.filter(w => isProficientWith(w, profs))
 })
+
+const proficientArmor = computed(() => {
+  const profs = store.selectedClass?.armor_proficiencies ?? []
+  if (!profs.length) return []
+  if (profs.includes('all')) return store.armors
+  return store.armors.filter(a => profs.includes(a.proficiency))
+})
+
+const hasShieldProficiency = computed(() => {
+  const profs = store.selectedClass?.armor_proficiencies ?? []
+  return profs.some(p => p === 'all' || p === 'shields' || p === 'shields_non_metal')
+})
+
+const unarmoredLabel = computed(() => {
+  if (props.modelValue.class === 'barbarian') return '10 + DEX + CON'
+  if (props.modelValue.class === 'monk') return '10 + DEX + WIS'
+  return '10 + DEX'
+})
+
+const acPreview = computed(() => {
+  const raceBonuses = store.selectedRace?.ability_bonuses ?? []
+  function bonused(ability: string, base: number) {
+    return base + (raceBonuses.find(b => b.ability === ability)?.bonus ?? 0)
+  }
+  function mod(score: number) { return Math.floor((score - 10) / 2) }
+
+  const dexMod = mod(bonused('dexterity', props.modelValue.abilities.dexterity))
+  const conMod = mod(bonused('constitution', props.modelValue.abilities.constitution))
+  const wisMod = mod(bonused('wisdom', props.modelValue.abilities.wisdom))
+
+  const armor = store.armors.find(a => a.id === props.modelValue.armor)
+  let ac: number
+  if (armor) {
+    if (armor.type === 'light') ac = armor.base + dexMod
+    else if (armor.type === 'medium') ac = armor.base + Math.min(dexMod, 2)
+    else ac = armor.base
+  } else if (props.modelValue.class === 'barbarian') {
+    ac = 10 + dexMod + conMod
+  } else if (props.modelValue.class === 'monk') {
+    ac = 10 + dexMod + wisMod
+  } else {
+    ac = 10 + dexMod
+  }
+  if (props.modelValue.shield) ac += 2
+  return ac
+})
+
+function selectArmor(id: string): void {
+  update('armor', id)
+}
+
+function toggleShield(): void {
+  update('shield', !props.modelValue.shield)
+}
 
 function toggleWeapon(id: string): void {
   const current = props.modelValue.weapons ?? []
