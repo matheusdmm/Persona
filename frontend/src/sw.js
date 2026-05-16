@@ -1,4 +1,4 @@
-const CACHE = 'heroscribe-v1';
+const CACHE = 'heroscribe-v__SW_VERSION__';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
