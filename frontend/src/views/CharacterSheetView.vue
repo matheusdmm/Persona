@@ -45,6 +45,9 @@
             <span class="sm:hidden">PDF</span>
             <span class="hidden sm:inline">Save as PDF</span>
           </button>
+          <button class="btn-secondary text-sm !px-3 sm:!px-6" @click="shareCharacter">
+            {{ copied ? 'Copied!' : 'Share' }}
+          </button>
           <button
             class="btn-secondary text-sm !px-3 sm:!px-6 flex items-center gap-1.5"
             :class="store.isSaved ? 'text-gold border-gold' : ''"
@@ -438,15 +441,24 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useCharacterStore } from '@/stores/character'
 import {
   ABILITY_NAMES, ABILITY_LABELS, SKILL_MAP, WEAPONS, isProficientWith,
   SPELLCASTING_CLASSES, SPELLCASTING_ABILITY, getSpellSlots, SPELL_LEVEL_LABELS,
 } from '@/types'
 import { formatMod } from '@/composables/useAbilityScores'
+import { buildShareUrl } from '@/composables/useShare'
 
 const store = useCharacterStore()
+const copied = ref(false)
+
+async function shareCharacter() {
+  const url = buildShareUrl(store.draft)
+  await navigator.clipboard.writeText(url)
+  copied.value = true
+  setTimeout(() => { copied.value = false }, 2000)
+}
 
 const savingThrows = computed(() => {
   if (!store.sheet || !store.selectedClass) return []
