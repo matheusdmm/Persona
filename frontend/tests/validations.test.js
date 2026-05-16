@@ -11,7 +11,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { modifier, formatMod, useAbilityScores } from '../src/composables/useAbilityScores.js'
-import { emptyCharacter } from '../src/types/index.js'
+import { emptyCharacter } from '../src/types'
 import { useCharacterStore } from '../src/stores/character.js'
 
 // localStorage mock — must be set before any store is instantiated

@@ -41,7 +41,7 @@
 <script setup>
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useCharacterStore } from '@/stores/character.js'
+import { useCharacterStore } from '@/stores/character'
 import StepIndicator from '@/components/ui/StepIndicator.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import DetailsStep   from '@/components/character/DetailsStep.vue'

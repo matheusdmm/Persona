@@ -122,11 +122,11 @@
   </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useCharacterStore } from '@/stores/character.js'
-import { useTheme } from '@/composables/useTheme.js'
+import { useCharacterStore } from '@/stores/character'
+import { useTheme } from '@/composables/useTheme'
 
 const store = useCharacterStore()
 const savedCount = computed(() => store.savedCharacters.length)

@@ -22,13 +22,14 @@
   </button>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 
-defineProps({
-  modelValue: { type: Boolean, required: true },
-  loading:    { type: Boolean, default: false },
-  label:      { type: String, required: true },
-})
-defineEmits(['update:modelValue'])
+withDefaults(defineProps<{
+  modelValue: boolean
+  loading?: boolean
+  label: string
+}>(), { loading: false })
+
+defineEmits<{ 'update:modelValue': [boolean] }>()
 </script>

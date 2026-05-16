@@ -70,20 +70,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
 import AbilityScoreInput from '@/components/ui/AbilityScoreInput.vue'
-import { ABILITY_NAMES, ABILITY_LABELS } from '@/types/index.js'
-import { useAbilityScores } from '@/composables/useAbilityScores.js'
+import { ABILITY_NAMES, ABILITY_LABELS } from '@/types'
+import { useAbilityScores } from '@/composables/useAbilityScores'
+import type { AbilityScores, AbilityName } from '@/types/models'
 
-const props = defineProps({
-  modelValue: { type: Object, required: true },
-})
-const emit = defineEmits(['update:modelValue'])
+type RollResult = { dice: number[]; droppedIdx: number; total: number }
+
+const props = defineProps<{ modelValue: AbilityScores }>()
+const emit = defineEmits<{ 'update:modelValue': [AbilityScores] }>()
 
 const scores = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val),
+  set: (val: AbilityScores) => emit('update:modelValue', val),
 })
 
 const method = ref('manual')
@@ -97,28 +98,28 @@ const methods = [
 const { pointBuyCost } = useAbilityScores()
 const pointsSpent = computed(() => pointBuyCost(scores.value))
 
-const rollResults = reactive({})
+const rollResults = reactive<Partial<Record<AbilityName, RollResult | null>>>({})
 
-function setMethod(value) {
+function setMethod(value: string): void {
   method.value = value
   if (value === 'roll') rollAll()
 }
 
-function roll2d20DropLowest() {
+function roll2d20DropLowest(): RollResult {
   const dice = Array.from({ length: 2 }, () => Math.ceil(Math.random() * 20))
   const droppedIdx = dice.indexOf(Math.min(...dice))
   const total = dice[droppedIdx === 0 ? 1 : 0]
   return { dice, droppedIdx, total }
 }
 
-function rollOne(ability) {
+function rollOne(ability: AbilityName): void {
   const result = roll2d20DropLowest()
   rollResults[ability] = result
   emit('update:modelValue', { ...props.modelValue, [ability]: result.total })
 }
 
-function rollAll() {
-  const newScores = { ...props.modelValue }
+function rollAll(): void {
+  const newScores = { ...props.modelValue } as AbilityScores
   for (const ability of ABILITY_NAMES) {
     const result = roll2d20DropLowest()
     rollResults[ability] = result
@@ -127,7 +128,7 @@ function rollAll() {
   emit('update:modelValue', newScores)
 }
 
-function onManualInput(ability, value) {
+function onManualInput(ability: AbilityName, value: number): void {
   rollResults[ability] = null
   emit('update:modelValue', { ...props.modelValue, [ability]: value })
 }

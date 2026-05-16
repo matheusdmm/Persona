@@ -439,12 +439,12 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useCharacterStore } from '@/stores/character.js'
+import { useCharacterStore } from '@/stores/character'
 import {
   ABILITY_NAMES, ABILITY_LABELS, SKILL_MAP, WEAPONS, isProficientWith,
   SPELLCASTING_CLASSES, SPELLCASTING_ABILITY, getSpellSlots, SPELL_LEVEL_LABELS,
-} from '@/types/index.js'
-import { formatMod } from '@/composables/useAbilityScores.js'
+} from '@/types'
+import { formatMod } from '@/composables/useAbilityScores'
 
 const store = useCharacterStore()
 

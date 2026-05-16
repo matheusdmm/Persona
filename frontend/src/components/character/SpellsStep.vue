@@ -97,18 +97,17 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { SPELLCASTING_CLASSES, SPELLCASTING_ABILITY, getSpellSlots, SPELL_LEVEL_LABELS } from '@/types/index.js'
-import { useCharacterStore } from '@/stores/character.js'
-import { getExtendedSpells } from '@/composables/useExtendedData.js'
+import { SPELLCASTING_CLASSES, SPELLCASTING_ABILITY, getSpellSlots, SPELL_LEVEL_LABELS } from '@/types'
+import { useCharacterStore } from '@/stores/character'
+import { getExtendedSpells } from '@/composables/useExtendedData'
 import ExtendedToggle from '@/components/ui/ExtendedToggle.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
+import type { CharacterDraft, Spell } from '@/types/models'
 
-const props = defineProps({
-  modelValue: { type: Object, required: true },
-})
-const emit = defineEmits(['update:modelValue'])
+const props = defineProps<{ modelValue: CharacterDraft }>()
+const emit = defineEmits<{ 'update:modelValue': [CharacterDraft] }>()
 const store = useCharacterStore()
 
 const search = ref('')
@@ -128,10 +127,10 @@ const maxSpellLevel = computed(() => {
 
 // Extended spells
 const extendedOn      = ref(localStorage.getItem('hs_ext_spells') === '1')
-const extSpells       = ref([])
+const extSpells       = ref<Spell[]>([])
 const extLoading      = ref(false)
 
-async function loadExtended(className) {
+async function loadExtended(className: string): Promise<void> {
   if (!className || !extendedOn.value) return
   extLoading.value = true
   try {
@@ -181,11 +180,11 @@ const selectedInLevel = computed(() =>
   (props.modelValue.spells ?? []).filter(s => s.level === activeLevel.value).length
 )
 
-function isSelected(spell) {
+function isSelected(spell: Spell): boolean {
   return (props.modelValue.spells ?? []).some(s => s.slug === spell.slug)
 }
 
-function toggleSpell(spell) {
+function toggleSpell(spell: Spell): void {
   const current = props.modelValue.spells ?? []
   const next = isSelected(spell)
     ? current.filter(s => s.slug !== spell.slug)

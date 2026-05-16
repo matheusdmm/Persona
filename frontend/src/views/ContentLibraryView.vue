@@ -153,7 +153,7 @@ import {
   TransitionRoot, TransitionChild,
 } from '@headlessui/vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
-import { useExtendedData } from '@/composables/useExtendedData.js'
+import { useExtendedData } from '@/composables/useExtendedData'
 
 const CATEGORIES = [
   { key: 'backgrounds', label: 'Backgrounds' },

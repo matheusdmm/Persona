@@ -63,16 +63,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted } from 'vue'
-import { useCharacterStore } from '@/stores/character.js'
-import { SKILL_MAP, ABILITY_LABELS } from '@/types/index.js'
-import { modifier, formatMod } from '@/composables/useAbilityScores.js'
+import { useCharacterStore } from '@/stores/character'
+import { SKILL_MAP, ABILITY_LABELS } from '@/types'
+import { modifier, formatMod } from '@/composables/useAbilityScores'
+import type { CharacterDraft, AbilityName } from '@/types/models'
 
-const props = defineProps({
-  modelValue: { type: Object, required: true },
-})
-const emit = defineEmits(['update:modelValue'])
+const props = defineProps<{ modelValue: CharacterDraft }>()
+const emit = defineEmits<{ 'update:modelValue': [CharacterDraft] }>()
 
 const store = useCharacterStore()
 
@@ -90,15 +89,15 @@ const profBonus = computed(() => {
   return Math.floor((level - 1) / 4) + 2
 })
 
-function abilityMod(ability) {
+function abilityMod(ability: AbilityName): number {
   return modifier(props.modelValue.abilities?.[ability] ?? 10)
 }
 
-function isSelected(key) {
+function isSelected(key: string): boolean {
   return props.modelValue.skills.includes(key)
 }
 
-function toggle(key) {
+function toggle(key: string): void {
   const current = props.modelValue.skills
   const next = isSelected(key)
     ? current.filter(k => k !== key)

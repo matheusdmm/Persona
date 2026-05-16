@@ -2,102 +2,84 @@
 
 > A free, no-account D&D character creator for 5e and 5.5e (2024).
 
-**Stack:** Go (Vercel Serverless) · Vue 3 · HeadlessUI · Tailwind CSS · Pinia · Vitest
+**Stack:** Go (Vercel Serverless) · Vue 3 · TypeScript · HeadlessUI · Tailwind CSS · Pinia · Vitest
 
 ---
 
 ## Features
 
-- Multi-step character creation wizard (Details, Race, Class, Skills, Abilities, Extras, Spells)
-- Supports **5e** and **5.5e (2024)** editions with per-edition filtering on races and classes
-- Ability scores via manual input, standard array, or point buy
-- Skill proficiency selection based on class choices
+- Multi-step character creation wizard — Details, Race, Class, Abilities, Skills, Extras, Spells
+- Supports **5e** and **5.5e (2024)** with per-edition filtering on races and classes
+- Ability scores via manual input, standard array, point buy, or dice roll
+- Skill proficiency selection scoped to your class choices
 - Weapon selection with attack bonus, damage dice, and proficiency indicator
-- **Spell list** — browse and select spells filtered by class and level, powered by the [Open5e API](https://api.open5e.com); full casters use the `spell_lists` relational field, paladin/ranger fall back to `dnd_class`
-- **Extended WotC content** — optional toggle to load 5,000+ items (weapons, armor, gear) from the WotC dataset; shows damage dice, AC, properties, and cost inline in search results
-- **Content Library** — `/library` page to browse all extended items and extended races/classes, with source filter toggles persisted in localStorage
-- Server-side character sheet calculation (modifiers, HP, AC, initiative, proficiency bonus, spell save DC)
-- **Save characters** to localStorage — star/favorite from the sheet, browse at `/saved`
-- **Save as PDF** via browser print (custom A4 layout, no external libraries)
-- **Export JSON** for backup or use in Foundry VTT, Roll20, etc.
-- Fully responsive — mobile hamburger nav, compact step indicator on small screens
-- Vercel Analytics integration
+- **Spell browser** — filter by class and level via the [Open5e API](https://api.open5e.com)
+- **Extended WotC content** — optional toggle to load 5,000+ items, spells, and backgrounds from the official WotC dataset
+- **Content Library** — `/library` page to browse all extended content with source filter toggles
+- Server-side character sheet calculation (HP, AC, modifiers, initiative, proficiency bonus)
+- **Save characters** to localStorage — star/favorite, browse at `/saved`
+- **Print to PDF** via browser print (custom A4 layout, no external libraries)
+- **Export JSON** for Foundry VTT, Roll20, or backup
+- Fully responsive — mobile nav, compact step indicator on small screens
+
+---
 
 ## Project Structure
 
 ```
 heroscribe/
-├── vercel.json                        # Build & rewrite config
-├── api/                               # Go serverless functions
-│   ├── go.mod
-│   ├── classes.go                     # GET /api/classes
-│   ├── races.go                       # GET /api/races
-│   ├── calculate.go                   # POST /api/calculate
-│   └── data/
-│       └── data.go                    # Races, classes, structs (SRD data)
-└── frontend/                          # Vue 3 app
-    ├── index.html
-    ├── package.json
-    ├── vite.config.js
-    ├── tailwind.config.js
-    ├── public/                        # Static assets (favicon, etc.)
+├── vercel.json                  # Build & rewrite config
+├── api/                         # Go serverless functions
+│   ├── classes.go               # GET /api/classes
+│   ├── races.go                 # GET /api/races
+│   ├── calculate.go             # POST /api/calculate
+│   └── data/data.go             # All SRD game data (races, classes, structs)
+└── frontend/
+    ├── tsconfig.json
     ├── tests/
-    │   ├── features.test.js           # 50 tests: spell slots, emptyCharacter, languages, weapons, Go API, Open5e, extended items
-    │   └── validations.test.js        # 49 tests: ability score math, step nav, store save/load/reset
+    │   ├── features.test.js     # Spell slots, emptyCharacter, Open5e, extended content
+    │   └── validations.test.js  # Ability score math, point buy, step nav, store logic
     └── src/
-        ├── main.js
-        ├── App.vue
-        ├── router/
-        │   └── index.js               # /, /create, /sheet, /saved, /library
-        ├── stores/
-        │   └── character.js           # Pinia store — draft, sheet, spells, savedCharacters
-        ├── composables/
-        │   ├── useApi.js              # fetch wrappers (races, classes, calculate, spells)
-        │   ├── useAbilityScores.js    # modifier calc, point buy, standard array
-        │   └── useExtendedData.js     # WotC extended items fetch + parse
         ├── types/
-        │   └── index.js               # JSDoc types, constants, emptyCharacter(), getSpellSlots()
-        ├── assets/
-        │   └── main.css               # Tailwind + @media print layout
+        │   ├── models.ts        # Core interfaces (CharacterDraft, Spell, Race, DnDClass…)
+        │   ├── extended.ts      # External WotC API shapes (ExtendedSpell, ExtendedItem)
+        │   └── index.ts         # Constants, game data, re-exports
+        ├── stores/
+        │   └── character.ts     # Pinia store — draft, sheet, spells, savedCharacters
+        ├── composables/
+        │   ├── useApi.ts        # fetch wrappers (races, classes, calculate, spells)
+        │   ├── useAbilityScores.ts
+        │   ├── useExtendedData.ts
+        │   └── useTheme.ts
         ├── views/
         │   ├── HomeView.vue
         │   ├── CharacterCreatorView.vue
         │   ├── CharacterSheetView.vue
         │   ├── SavedCharactersView.vue
-        │   └── ContentLibraryView.vue # /library — browse extended content
+        │   └── ContentLibraryView.vue
         └── components/
-            ├── layout/
-            │   ├── AppHeader.vue      # Responsive nav with mobile hamburger
-            │   └── AppFooter.vue
-            ├── ui/
-            │   ├── BaseCard.vue
-            │   ├── AbilityScoreInput.vue
-            │   ├── StatBox.vue
-            │   ├── StepIndicator.vue
-            │   ├── LoadingSpinner.vue # Animated SVG spinner
-            │   └── ExtendedToggle.vue # HeadlessUI Switch for WotC content toggles
-            └── character/
-                ├── DetailsStep.vue
-                ├── RaceSelector.vue
-                ├── ClassSelector.vue
-                ├── SkillsStep.vue
-                ├── AbilitiesStep.vue
-                ├── ExtrasStep.vue     # Weapons, gold, languages, equipment (with item detail display)
-                └── SpellsStep.vue     # Spell browser + selection (Open5e API)
+            ├── layout/          # AppHeader, AppFooter
+            ├── ui/              # BaseCard, AbilityScoreInput, StepIndicator, ExtendedToggle…
+            └── character/       # DetailsStep, RaceSelector, ClassSelector, SkillsStep,
+                                 # AbilitiesStep, ExtrasStep, SpellsStep
 ```
+
+---
 
 ## Local Development
 
 ```bash
-# Frontend only
+# Frontend only (proxies /api → :3000)
 cd frontend
 npm install
-npm run dev        # :5173, proxies /api → :3000
+npm run dev          # http://localhost:5173
 
 # Full stack (frontend + Go API)
 npm i -g vercel
-vercel dev         # :3000
+vercel dev           # http://localhost:3000
 ```
+
+---
 
 ## Testing
 
@@ -106,14 +88,16 @@ cd frontend
 npm test
 ```
 
-Runs 99 tests across two files:
+100 tests across two files:
 
 | File | What it covers |
 |---|---|
-| `tests/features.test.js` | Spell slot tables, `emptyCharacter`, race languages, weapon proficiency, `SPELLCASTING_CLASSES`, Go API endpoints, Open5e spell filter, extended WotC items |
-| `tests/validations.test.js` | `modifier()` / `formatMod()`, point buy cost table, step navigation (`canProceed`), Pinia store navigation, `isComplete`, save / load / delete / import |
+| `features.test.js` | Spell slot tables, `emptyCharacter`, race languages, weapon proficiency, Go API endpoints, Open5e spell filter, extended WotC content |
+| `validations.test.js` | `modifier()` / `formatMod()`, point buy cost table, step navigation, Pinia store, save / load / delete / import |
 
-The Go API tests (`describe('Go API …')`) require `vercel dev` running on `:3000`. The Open5e and extended items tests require internet access. All pure-logic tests run offline.
+> **Note:** Go API tests require `vercel dev` running on `:3000`. Open5e and extended content tests require internet access. All pure-logic tests run offline.
+
+---
 
 ## Deploy
 
@@ -121,18 +105,24 @@ The Go API tests (`describe('Go API …')`) require `vercel dev` running on `:30
 vercel
 ```
 
-Vercel runs the Go handlers as serverless functions and serves the Vue build from `frontend/dist`.
+Vercel builds the Vue app from `frontend/dist` and runs the Go handlers as serverless functions. Routes under `/api/*` hit Go; everything else falls through to `index.html` for client-side routing.
 
-## PDF Export
-
-Uses `window.print()` with a custom `@media print` block in `main.css`. The print CSS forces a 3-column A4 layout by overriding Tailwind's `lg:` breakpoint (which never fires at A4 portrait width ~794px). Do **not** replace this with html2pdf.js or html2canvas — they cause font clipping and page-split artifacts with the custom web fonts used here (Crimson Text, MedievalSharp).
+---
 
 ## Key Conventions
 
-- The `edition` field on races and classes is `"5e"`, `"5.5e"`, or `"both"`. The frontend filters by the draft's `edition` field.
-- HP formula: `hitDie + CON_mod + (level-1) × (floor(hitDie/2) + 1 + CON_mod)` — computed server-side in `calculate.go`.
-- Point buy uses a non-linear cost table (scores 8–15, cost 0–9 points) in `useAbilityScores.js`.
-- Spell slots are computed client-side via `getSpellSlots(className, level)` in `types/index.js` using SRD tables for full casters, half casters, and warlock pact magic.
-- Extended content toggles persist via localStorage keys (`hs_ext_items`, `hs_ext_races`). On mount, if the toggle was saved as on, data is loaded directly — the toggle state is not flipped again.
-- Tailwind's stone color scale is **inverted**: `stone-950` = `#fdf8ef` (cream page background), not dark.
-- Never use hardcoded `bg-white` — use theme-aware classes like `bg-stone-900` so both light and dark themes resolve correctly via the CSS variable palette in `main.css`.
+**Editions** — the `edition` field on races and classes is `"5e"`, `"5.5e"`, or `"both"`. Selectors filter by the draft's `edition` field.
+
+**HP formula** — `hitDie + CON_mod + (level - 1) × (floor(hitDie / 2) + 1 + CON_mod)` — computed server-side in `calculate.go`.
+
+**Point buy** — non-linear cost table (scores 8–15, cost 0–9 points) in `useAbilityScores.ts`.
+
+**Spell slots** — computed client-side via `getSpellSlots(className, level)` in `types/index.ts`, using SRD tables for full casters, half casters, and warlock pact magic.
+
+**Open5e spell filter** — uses `spell_lists=<class>` (indexed field). Paladin is an exception: `spell_lists=paladin` returns HTTP 400, so it falls back to `dnd_class=Paladin`.
+
+**Extended content** — toggle state persists via localStorage keys (`hs_ext_items`, `hs_ext_spells`, `hs_ext_backgrounds`). Data is loaded once on first toggle and cached in memory.
+
+**Theming** — Tailwind's stone scale is inverted: `stone-950` = `#fdf8ef` (cream). Never use `bg-white` — use theme-aware classes like `bg-stone-900` so light and dark themes resolve correctly via CSS variables in `main.css`.
+
+**PDF export** — uses `window.print()` with a custom `@media print` block. Do not replace with html2pdf.js or html2canvas — they cause font clipping and page-split artifacts with the custom web fonts (Crimson Text, MedievalSharp).

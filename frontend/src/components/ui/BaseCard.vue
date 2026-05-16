@@ -13,9 +13,12 @@
   </div>
 </template>
 
-<script setup>
-defineProps({
-  selected: { type: Boolean, default: false },
-  clickable: { type: Boolean, default: false },
+<script setup lang="ts">
+withDefaults(defineProps<{
+  selected?: boolean
+  clickable?: boolean
+}>(), {
+  selected: false,
+  clickable: false,
 })
 </script>

@@ -57,15 +57,17 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
+import type { Race } from '@/types/models'
 
-const props = defineProps({
-  races: { type: Array, required: true },
-  selected: { type: String, default: '' },
-})
-defineEmits(['update:selected'])
+const props = withDefaults(defineProps<{
+  races: Race[]
+  selected?: string
+}>(), { selected: '' })
+
+defineEmits<{ 'update:selected': [string] }>()
 
 const filter = ref('all')
 const editions = [

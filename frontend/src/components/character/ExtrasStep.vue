@@ -41,7 +41,7 @@
           <input
             type="number"
             :value="modelValue.gold"
-            @input="update('gold', Number($event.target.value))"
+            @input="update('gold', Number(($event.target as HTMLInputElement).value))"
             min="0"
             class="w-28 bg-stone-800 border border-stone-600 text-parchment px-3 py-2
                    focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20
@@ -191,7 +191,7 @@
             <label class="block text-xs text-stone-400 uppercase tracking-wide mb-1">{{ field.label }}</label>
             <textarea
               :value="modelValue[field.key]"
-              @input="update(field.key, $event.target.value)"
+              @input="update(field.key, ($event.target as HTMLTextAreaElement).value)"
               :placeholder="field.placeholder"
               rows="2"
               class="w-full bg-stone-800 border border-stone-600 text-parchment px-3 py-2
@@ -206,24 +206,23 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import ExtendedToggle from '@/components/ui/ExtendedToggle.vue'
 import {
   ALL_LANGUAGES, RACE_LANGUAGES,
   CLASS_GOLD_ROLLS, CLASS_STARTING_EQUIPMENT,
   WEAPONS, isProficientWith,
-} from '@/types/index.js'
-import { useCharacterStore } from '@/stores/character.js'
-import { getExtendedItems } from '@/composables/useExtendedData.js'
+} from '@/types'
+import { useCharacterStore } from '@/stores/character'
+import { getExtendedItems } from '@/composables/useExtendedData'
+import type { CharacterDraft, ExtendedItem } from '@/types'
 
-const props = defineProps({
-  modelValue: { type: Object, required: true },
-})
-const emit = defineEmits(['update:modelValue'])
+const props = defineProps<{ modelValue: CharacterDraft }>()
+const emit = defineEmits<{ 'update:modelValue': [CharacterDraft] }>()
 const store = useCharacterStore()
 
-function update(field, value) {
+function update(field: keyof CharacterDraft, value: unknown): void {
   emit('update:modelValue', { ...props.modelValue, [field]: value })
 }
 
@@ -232,7 +231,7 @@ const proficientWeapons = computed(() => {
   return WEAPONS.filter(w => isProficientWith(w, profs))
 })
 
-function toggleWeapon(id) {
+function toggleWeapon(id: string): void {
   const current = props.modelValue.weapons ?? []
   const next = current.includes(id) ? current.filter(w => w !== id) : [...current, id]
   update('weapons', next)
@@ -273,7 +272,7 @@ function addLanguage() {
   newLanguage.value = ''
 }
 
-function removeLanguage(lang) {
+function removeLanguage(lang: string): void {
   update('languages', props.modelValue.languages.filter(l => l !== lang))
 }
 
@@ -286,7 +285,7 @@ function addItem() {
   newItem.value = ''
 }
 
-function removeItem(i) {
+function removeItem(i: number): void {
   update('equipment', props.modelValue.equipment.filter((_, idx) => idx !== i))
 }
 
@@ -294,7 +293,7 @@ function removeItem(i) {
 const extItemsOn      = ref(localStorage.getItem('hs_ext_items') === '1')
 const extItemsLoading = ref(false)
 const extItemSearch   = ref('')
-const allExtItems     = ref([])
+const allExtItems     = ref<ExtendedItem[]>([])
 
 const filteredExtItems = computed(() => {
   const q = extItemSearch.value.toLowerCase().trim()
@@ -316,7 +315,7 @@ async function toggleExtItems() {
   if (!extItemsOn.value) extItemSearch.value = ''
 }
 
-function addExtItem(item) {
+function addExtItem(item: ExtendedItem): void {
   if (!item) return
   if (!props.modelValue.equipment.includes(item.name)) {
     update('equipment', [...props.modelValue.equipment, item.name])
@@ -326,7 +325,7 @@ function addExtItem(item) {
 
 if (extItemsOn.value) loadExtItems()
 
-const personalityFields = [
+const personalityFields: Array<{ key: 'trait' | 'ideal' | 'bond' | 'flaw'; label: string; placeholder: string }> = [
   { key: 'trait', label: 'Personality Trait', placeholder: 'How does your character behave?' },
   { key: 'ideal', label: 'Ideal',             placeholder: 'What principle drives them?' },
   { key: 'bond',  label: 'Bond',              placeholder: 'What ties them to the world?' },

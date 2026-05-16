@@ -76,15 +76,17 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
+import type { DnDClass } from '@/types/models'
 
-const props = defineProps({
-  classes: { type: Array, required: true },
-  selected: { type: String, default: '' },
-})
-defineEmits(['update:selected'])
+const props = withDefaults(defineProps<{
+  classes: DnDClass[]
+  selected?: string
+}>(), { selected: '' })
+
+defineEmits<{ 'update:selected': [string] }>()
 
 const filter = ref('all')
 const editions = [

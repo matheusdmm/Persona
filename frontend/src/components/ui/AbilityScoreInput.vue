@@ -4,7 +4,7 @@
     <input
       type="number"
       :value="modelValue"
-      @input="$emit('update:modelValue', Number($event.target.value))"
+      @input="$emit('update:modelValue', Number(($event.target as HTMLInputElement).value))"
       min="1"
       max="20"
       class="w-16 h-16 text-center text-xl font-bold bg-stone-800 border border-stone-600
@@ -20,15 +20,16 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
-import { modifier, formatMod } from '@/composables/useAbilityScores.js'
+import { modifier, formatMod } from '@/composables/useAbilityScores'
 
-const props = defineProps({
-  modelValue: { type: Number, required: true },
-  label: { type: String, required: true },
-})
-defineEmits(['update:modelValue'])
+const props = defineProps<{
+  modelValue: number
+  label: string
+}>()
+
+defineEmits<{ 'update:modelValue': [number] }>()
 
 const mod = computed(() => modifier(props.modelValue))
 </script>

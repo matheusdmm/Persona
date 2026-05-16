@@ -1,10 +1,15 @@
 import { ref } from 'vue'
+import type { Ref } from 'vue'
 
-const theme = ref(
-  typeof localStorage !== 'undefined' ? (localStorage.getItem('theme') ?? 'dark') : 'dark'
+type Theme = 'light' | 'dark'
+
+const theme: Ref<Theme> = ref(
+  typeof localStorage !== 'undefined'
+    ? ((localStorage.getItem('theme') as Theme) ?? 'dark')
+    : 'dark'
 )
 
-function applyTheme(t) {
+function applyTheme(t: Theme): void {
   document.documentElement.classList.toggle('dark', t === 'dark')
   localStorage.setItem('theme', t)
 }
@@ -12,7 +17,7 @@ function applyTheme(t) {
 applyTheme(theme.value)
 
 export function useTheme() {
-  function toggle() {
+  function toggle(): void {
     theme.value = theme.value === 'light' ? 'dark' : 'light'
     applyTheme(theme.value)
   }

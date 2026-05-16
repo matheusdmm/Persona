@@ -54,7 +54,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useCharacterStore } from '@/stores/character.js'
+import { useCharacterStore } from '@/stores/character'
 
 const store = useCharacterStore()
 const router = useRouter()

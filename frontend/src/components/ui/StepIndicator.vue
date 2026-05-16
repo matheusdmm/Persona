@@ -44,9 +44,9 @@
   </div>
 </template>
 
-<script setup>
-defineProps({
-  steps:   { type: Array,  required: true },
-  current: { type: Number, required: true },
-})
+<script setup lang="ts">
+defineProps<{
+  steps: string[]
+  current: number
+}>()
 </script>

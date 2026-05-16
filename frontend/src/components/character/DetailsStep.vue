@@ -10,7 +10,7 @@
         <input
           type="text"
           :value="modelValue.name"
-          @input="update('name', $event.target.value)"
+          @input="update('name', ($event.target as HTMLInputElement).value)"
           placeholder="Enter a name..."
           class="w-full bg-stone-800 border border-stone-600 text-parchment px-3 py-2
                  focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20
@@ -24,7 +24,7 @@
         <input
           type="text"
           :value="modelValue.playerName"
-          @input="update('playerName', $event.target.value)"
+          @input="update('playerName', ($event.target as HTMLInputElement).value)"
           placeholder="Your name..."
           class="w-full bg-stone-800 border border-stone-600 text-parchment px-3 py-2
                  focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20
@@ -38,7 +38,7 @@
         <input
           type="number"
           :value="modelValue.level"
-          @input="update('level', Number($event.target.value))"
+          @input="update('level', Number(($event.target as HTMLInputElement).value))"
           min="1"
           max="20"
           class="w-24 bg-stone-800 border border-stone-600 text-parchment px-3 py-2
@@ -60,7 +60,7 @@
         </div>
         <select
           :value="modelValue.background"
-          @change="update('background', $event.target.value)"
+          @change="update('background', ($event.target as HTMLInputElement).value)"
           class="w-full bg-stone-800 border border-stone-600 text-parchment px-3 py-2
                  focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20
                  rounded-md shadow-input transition-shadow"
@@ -118,25 +118,24 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
-import { BACKGROUNDS, ALIGNMENTS } from '@/types/index.js'
-import { useExtendedData } from '@/composables/useExtendedData.js'
+import { BACKGROUNDS, ALIGNMENTS } from '@/types'
+import { useExtendedData } from '@/composables/useExtendedData'
 import ExtendedToggle from '@/components/ui/ExtendedToggle.vue'
+import type { CharacterDraft } from '@/types/models'
 
-const props = defineProps({
-  modelValue: { type: Object, required: true },
-})
-const emit = defineEmits(['update:modelValue'])
+const props = defineProps<{ modelValue: CharacterDraft }>()
+const emit = defineEmits<{ 'update:modelValue': [CharacterDraft] }>()
 
-function update(field, value) {
+function update(field: keyof CharacterDraft, value: unknown): void {
   emit('update:modelValue', { ...props.modelValue, [field]: value })
 }
 
-const extendedOn    = ref(localStorage.getItem('hs_ext_backgrounds') === '1')
-const extBackgrounds = ref([])
-const extLoading    = ref(false)
-const extError      = ref(null)
+const extendedOn     = ref(localStorage.getItem('hs_ext_backgrounds') === '1')
+const extBackgrounds = ref<string[]>([])
+const extLoading     = ref(false)
+const extError       = ref<string | null>(null)
 
 const { entries, loading, error, load } = useExtendedData()
 
