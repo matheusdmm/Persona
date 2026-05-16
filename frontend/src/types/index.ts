@@ -1,4 +1,4 @@
-export type { AbilityName, Edition, WeaponCategory, AbilityScores, Trait, AbilityBonus, Race, DnDClass, CharacterDraft, CharacterSheet, CharacterInput, SelectedSpell, Spell, SavedEntry, Weapon, SkillEntry, GoldRoll } from './models'
+export type { AbilityName, Edition, WeaponCategory, AbilityScores, Trait, AbilityBonus, Race, DnDClass, CharacterDraft, CharacterSheet, CharacterInput, SelectedSpell, Spell, SavedEntry, Weapon, SkillEntry, GoldRoll, ArmorItem } from './models'
 export type { CategoryKey, RawEntry, ExtendedSpell, ExtendedItem } from './extended'
 import type { AbilityName, Weapon, SkillEntry, GoldRoll } from './models'
 
@@ -185,6 +185,37 @@ const WARLOCK_PACT: [number, number][] = [
   [3,5],[3,5],[3,5],[3,5],[3,5],[3,5],[4,5],[4,5],[4,5],[4,5],
 ]
 
+/** Max cantrips a class can know at character creation. Rangers get 2 in 5.5e, 0 in 5e. */
+export function getMaxCantrips(className: string, edition: string): number {
+  const table: Record<string, number> = {
+    bard: 2, cleric: 3, druid: 2, paladin: 0,
+    ranger: edition === '5.5e' ? 2 : 0,
+    sorcerer: 4, warlock: 2, wizard: 3,
+  }
+  return table[className] ?? 0
+}
+
+/**
+ * Max spells a class can know/prepare at character creation.
+ * Known casters: fixed values. Prepared casters: ability mod + level (min 1).
+ * Wizard is simplified to spellbook size (6). Non-casters return 0.
+ * @param wisMod — already includes race bonus
+ * @param chaMod — already includes race bonus
+ */
+export function getMaxSpells(className: string, level: number, wisMod: number, chaMod: number): number {
+  switch (className) {
+    case 'bard':     return 4
+    case 'cleric':   return Math.max(1, wisMod + level)
+    case 'druid':    return Math.max(1, wisMod + level)
+    case 'paladin':  return Math.max(1, chaMod + Math.floor(level / 2))
+    case 'ranger':   return 2
+    case 'sorcerer': return 2
+    case 'warlock':  return 2
+    case 'wizard':   return 6
+    default:         return 0
+  }
+}
+
 /** Returns an array of 9 slot counts (index 0 = 1st level), or null for non-casters. */
 export function getSpellSlots(className: string, level: number): number[] | null {
   const idx = Math.min(Math.max(level, MIN_LEVEL), MAX_LEVEL) - 1
@@ -225,6 +256,8 @@ export function emptyCharacter(): CharacterDraft {
     languages: ['Common'],
     equipment: [],
     weapons: [],
+    armor: '',
+    shield: false,
     spells: [],
     trait: '',
     ideal: '',

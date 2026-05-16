@@ -30,8 +30,18 @@
           <strong class="text-parchment capitalize">{{ spellAbility }}</strong>
         </span>
         <span class="text-stone-600">·</span>
+        <span v-if="maxCantrips > 0" class="text-stone-400">
+          Cantrips:
+          <strong :class="cantripCount >= maxCantrips ? 'text-gold' : 'text-parchment'">
+            {{ cantripCount }}/{{ maxCantrips }}
+          </strong>
+        </span>
+        <span v-if="maxCantrips > 0" class="text-stone-600">·</span>
         <span class="text-stone-400">
-          Selected: <strong class="text-gold">{{ selectedCount }}</strong>
+          Spells:
+          <strong :class="spellCount >= maxSpells ? 'text-gold' : 'text-parchment'">
+            {{ spellCount }}/{{ maxSpells }}
+          </strong>
         </span>
         <span class="text-stone-600">·</span>
         <ExtendedToggle
@@ -80,10 +90,13 @@
           v-for="spell in filteredSpells"
           :key="spell.slug"
           @click="toggleSpell(spell)"
+          :disabled="isDisabled(spell)"
           class="text-left px-3 py-2.5 border rounded-md transition-all duration-150"
           :class="isSelected(spell)
             ? 'border-gold bg-gold/10 text-parchment'
-            : 'border-stone-700 text-stone-400 hover:border-stone-500 hover:text-stone-300'"
+            : isDisabled(spell)
+              ? 'border-stone-800 text-stone-600 cursor-not-allowed opacity-40'
+              : 'border-stone-700 text-stone-400 hover:border-stone-500 hover:text-stone-300'"
         >
           <div class="font-semibold text-sm leading-tight">{{ spell.name }}</div>
           <div class="text-xs opacity-60 mt-0.5">
@@ -99,7 +112,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { SPELLCASTING_CLASSES, SPELLCASTING_ABILITY, getSpellSlots, SPELL_LEVEL_LABELS } from '@/types'
+import { SPELLCASTING_CLASSES, SPELLCASTING_ABILITY, getSpellSlots, getMaxCantrips, getMaxSpells, SPELL_LEVEL_LABELS } from '@/types'
 import { useCharacterStore } from '@/stores/character'
 import { getExtendedSpells } from '@/composables/useExtendedData'
 import ExtendedToggle from '@/components/ui/ExtendedToggle.vue'
@@ -109,6 +122,27 @@ import type { CharacterDraft, Spell } from '@/types/models'
 const props = defineProps<{ modelValue: CharacterDraft }>()
 const emit = defineEmits<{ 'update:modelValue': [CharacterDraft] }>()
 const store = useCharacterStore()
+
+function abilityMod(score: number): number { return Math.floor((score - 10) / 2) }
+
+function raceBonused(ability: string, base: number): number {
+  const bonus = store.selectedRace?.ability_bonuses.find(b => b.ability === ability)?.bonus ?? 0
+  return base + bonus
+}
+
+const maxCantrips = computed((): number =>
+  getMaxCantrips(props.modelValue.class, props.modelValue.edition)
+)
+
+const maxSpells = computed((): number => {
+  const ab  = props.modelValue.abilities
+  const wis = abilityMod(raceBonused('wisdom',   ab.wisdom))
+  const cha = abilityMod(raceBonused('charisma', ab.charisma))
+  return getMaxSpells(props.modelValue.class, props.modelValue.level, wis, cha)
+})
+
+const cantripCount = computed(() => (props.modelValue.spells ?? []).filter(s => s.level === 0).length)
+const spellCount   = computed(() => (props.modelValue.spells ?? []).filter(s => s.level  >  0).length)
 
 const search = ref('')
 const activeLevel = ref(-1)
@@ -184,7 +218,15 @@ function isSelected(spell: Spell): boolean {
   return (props.modelValue.spells ?? []).some(s => s.slug === spell.slug)
 }
 
+function isDisabled(spell: Spell): boolean {
+  if (isSelected(spell)) return false
+  return spell.level_int === 0
+    ? cantripCount.value >= maxCantrips.value
+    : spellCount.value   >= maxSpells.value
+}
+
 function toggleSpell(spell: Spell): void {
+  if (isDisabled(spell)) return
   const current = props.modelValue.spells ?? []
   const next = isSelected(spell)
     ? current.filter(s => s.slug !== spell.slug)
