@@ -32,21 +32,6 @@
         />
       </div>
 
-      <!-- Level -->
-      <div>
-        <label class="block text-sm text-stone-400 mb-1">Starting Level</label>
-        <input
-          type="number"
-          :value="modelValue.level"
-          @input="update('level', Number(($event.target as HTMLInputElement).value))"
-          min="1"
-          max="20"
-          class="w-24 bg-stone-800 border border-stone-600 text-parchment px-3 py-2
-                 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20
-                 rounded-md shadow-input transition-shadow"
-        />
-      </div>
-
       <!-- Background -->
       <div>
         <div class="flex items-center justify-between mb-1">

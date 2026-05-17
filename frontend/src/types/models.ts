@@ -31,6 +31,14 @@ export interface Race {
   ability_bonuses: AbilityBonus[]
 }
 
+export interface Subclass {
+  id: string
+  name: string
+  edition: Edition
+  level_gained: number
+  description: string
+}
+
 export interface DnDClass {
   id: string
   name: string
@@ -42,6 +50,7 @@ export interface DnDClass {
   available_skills: string[]
   weapon_proficiencies: string[]
   armor_proficiencies: string[]
+  subclasses: Subclass[]
 }
 
 export interface SelectedSpell {
@@ -80,6 +89,7 @@ export interface CharacterDraft {
   name: string
   race: string
   class: string
+  subclass: string
   level: number
   background: string
   edition: '5e' | '5.5e'
