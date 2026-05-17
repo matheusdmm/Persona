@@ -1,4 +1,4 @@
-export type { AbilityName, Edition, WeaponCategory, AbilityScores, Trait, AbilityBonus, Race, DnDClass, CharacterDraft, CharacterSheet, CharacterInput, SelectedSpell, Spell, SavedEntry, Weapon, SkillEntry, GoldRoll, ArmorItem } from './models'
+export type { AbilityName, Edition, WeaponCategory, AbilityScores, Trait, AbilityBonus, Race, DnDClass, Subclass, CharacterDraft, CharacterSheet, CharacterInput, SelectedSpell, Spell, SavedEntry, Weapon, SkillEntry, GoldRoll, ArmorItem } from './models'
 export type { CategoryKey, RawEntry, ExtendedSpell, ExtendedItem } from './extended'
 import type { AbilityName, Weapon, SkillEntry, GoldRoll } from './models'
 
@@ -237,6 +237,7 @@ export function emptyCharacter(): CharacterDraft {
     name: '',
     race: '',
     class: '',
+    subclass: '',
     level: 1,
     background: '',
     edition: '5e',

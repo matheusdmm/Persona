@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { emptyCharacter } from '@/types'
+import { emptyCharacter, SPELLCASTING_CLASSES, getMaxCantrips, getMaxSpells, getSpellSlots } from '@/types'
 import { useApi } from '@/composables/useApi'
 import type { Race, DnDClass, CharacterDraft, CharacterSheet, Spell, SavedEntry, ArmorItem } from '@/types/models'
 
@@ -25,9 +25,25 @@ export const useCharacterStore = defineStore('character', () => {
   // Getters
   const selectedRace  = computed(() => races.value.find(r => r.id === draft.value.race))
   const selectedClass = computed(() => classes.value.find(c => c.id === draft.value.class))
-  const isComplete    = computed(() =>
-    draft.value.name && draft.value.race && draft.value.class && draft.value.background
-  )
+  const isComplete = computed(() => {
+    const d = draft.value
+    if (!d.name || !d.race || !d.class || !d.background) return false
+    if (SPELLCASTING_CLASSES.has(d.class)) {
+      const raceBonus = (ab: string) =>
+        selectedRace.value?.ability_bonuses?.find(b => b.ability === ab)?.bonus ?? 0
+      const wisMod = Math.floor((d.abilities.wisdom   + raceBonus('wisdom')   - 10) / 2)
+      const chaMod = Math.floor((d.abilities.charisma + raceBonus('charisma') - 10) / 2)
+      const maxC = getMaxCantrips(d.class, d.edition)
+      const maxS = getMaxSpells(d.class, d.level, wisMod, chaMod)
+      const slots = getSpellSlots(d.class, d.level)
+      const hasSlots = slots ? slots.some(s => s > 0) : false
+      const spells = d.spells ?? []
+      const cantripCnt = spells.filter(s => s.level === 0).length
+      const spellCnt   = spells.filter(s => s.level  > 0).length
+      if (cantripCnt < maxC || spellCnt < (hasSlots ? maxS : 0)) return false
+    }
+    return true
+  })
   const isSaved = computed(() =>
     !!draft.value.savedId && savedCharacters.value.some(c => c.id === draft.value.savedId)
   )
