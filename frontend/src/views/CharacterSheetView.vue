@@ -281,13 +281,13 @@
               <div>
                 <p class="text-[10px] text-stone-400 uppercase tracking-widest mb-1">Armor</p>
                 <p class="text-parchment capitalize">
-                  {{ store.selectedClass.armor_proficiencies.join(', ') || 'None' }}
+                  {{ store.selectedClass.armor_proficiencies.join(', ').replace(/_/g, ' ') || 'None' }}
                 </p>
               </div>
               <div>
                 <p class="text-[10px] text-stone-400 uppercase tracking-widest mb-1">Weapons</p>
                 <p class="text-parchment capitalize">
-                  {{ store.selectedClass.weapon_proficiencies.join(', ') }}
+                  {{ store.selectedClass.weapon_proficiencies.join(', ').replace(/_/g, ' ') }}
                 </p>
               </div>
               <div v-if="store.draft.languages?.length">
