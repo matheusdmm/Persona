@@ -36,6 +36,8 @@ func main() {
 	api.GET("/classes", classesHandler, contentCache)
 	api.GET("/armor", armorHandler, contentCache)
 	api.POST("/calculate", calculateHandler)
+	api.GET("/spells", spellsHandler, contentCache)
+	api.GET("/extended/:category", extendedHandler, contentCache)
 
 	// Serve the built SPA, falling back to index.html for client-side routes
 	// (Vue Router history mode). API paths skip this so the router handles them.

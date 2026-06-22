@@ -1,9 +1,7 @@
 <template>
     <footer class="no-print border-t border-stone-700 bg-stone-950 mt-10">
         <div class="max-w-6xl mx-auto px-6 py-10">
-            <!-- Top row -->
             <div class="flex flex-col sm:flex-row justify-between gap-8 mb-8">
-                <!-- Brand -->
                 <div class="max-w-xs">
                     <p class="font-display text-lg font-bold text-parchment uppercase tracking-[0.18em] mb-2">
                         Persona
@@ -14,7 +12,6 @@
                     </p>
                 </div>
 
-                <!-- Links -->
                 <nav class="flex gap-12 text-sm">
                     <div class="flex flex-col gap-2.5">
                         <p class="text-[10px] text-stone-500 uppercase tracking-widest mb-1">
@@ -51,7 +48,6 @@
                 </nav>
             </div>
 
-            <!-- Divider -->
             <div
                 class="border-t border-stone-700 pt-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs text-stone-500">
                 <p>

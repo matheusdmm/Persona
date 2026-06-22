@@ -1,37 +1,24 @@
 import { ref } from 'vue'
 import type { CategoryKey, RawEntry, ExtendedSpell, ExtendedItem } from '@/types/extended'
 
-const BASE_URL = 'https://raw.githubusercontent.com/nick-aschenbach/dnd-data/main/data'
+const BASE = '/api'
 
-const WOTC_PUBLISHERS = new Set(['Wizards of the Coast', 'Wizards of the Coast, Inc.'])
-
-export const CATEGORY_ENDPOINTS: Record<CategoryKey, string> = {
-  backgrounds: `${BASE_URL}/backgrounds.json`,
-  species:     `${BASE_URL}/species.json`,
-  classes:     `${BASE_URL}/classes.json`,
-  spells:      `${BASE_URL}/spells.json`,
-  items:       `${BASE_URL}/items.json`,
+function fetchWithTimeout(url: string, ms = 8000): Promise<Response> {
+  const controller = new AbortController()
+  const id = setTimeout(() => controller.abort(), ms)
+  return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(id))
 }
 
 const cache: Partial<Record<CategoryKey, RawEntry[]>> = {}
 
-function dedup(arr: RawEntry[]): RawEntry[] {
-  const seen = new Set<string>()
-  return arr.filter(e => {
-    if (seen.has(e.name)) return false
-    seen.add(e.name)
-    return true
-  })
-}
-
+// Filtering to official WotC content and deduping by name happens server-side now.
 async function fetchCategory(category: CategoryKey): Promise<RawEntry[]> {
   if (cache[category]) return cache[category]!
-  const res = await fetch(CATEGORY_ENDPOINTS[category])
+  const res = await fetchWithTimeout(`${BASE}/extended/${category}`)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  const raw: RawEntry[] = await res.json()
-  const filtered = dedup(raw.filter(e => WOTC_PUBLISHERS.has(e.publisher)))
-  cache[category] = filtered
-  return filtered
+  const entries: RawEntry[] = await res.json()
+  cache[category] = entries
+  return entries
 }
 
 function mapSpell(e: RawEntry): ExtendedSpell {

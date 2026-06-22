@@ -87,7 +87,7 @@
                         <div class="grid grid-cols-4 gap-2 py-3 border-y border-stone-700">
                             <div v-for="c in combat" :key="c.label" class="text-center">
                                 <p class="stat-num text-xl sm:text-2xl font-bold text-parchment leading-none">{{ c.value
-                                    }}</p>
+                                }}</p>
                                 <p class="text-[9px] text-stone-500 uppercase tracking-widest mt-1.5">{{ c.label }}</p>
                             </div>
                         </div>
@@ -120,7 +120,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <div class="feat-icon text-gold" v-html="feat.icon" />
                         <span class="font-mono text-[10px] tracking-[0.25em] uppercase text-stone-500">{{ feat.tag
-                            }}</span>
+                        }}</span>
                     </div>
                     <h3 class="text-parchment font-semibold mb-2 text-base">{{ feat.title }}</h3>
                     <p class="text-stone-400 text-sm leading-relaxed">{{ feat.body }}</p>
@@ -129,34 +129,22 @@
             </div>
 
             <!-- Also by the author -->
-            <div class="also mt-8">
-                <p class="font-mono text-[10px] text-stone-500 uppercase tracking-[0.25em] mb-3">Other tools</p>
-
-                <div class="flex flex-col gap-3">
-                    <div
-                        class="flex flex-col sm:flex-row items-center justify-between gap-4 px-5 py-4 border border-stone-700 rounded-xl bg-stone-800/40">
-                        <div>
-                            <p class="text-parchment font-semibold text-sm">Tome of Changes</p>
-                            <p class="text-stone-400 text-xs mt-0.5">Side-by-side comparison of every rule change
-                                between D&D 5e and 5.5e (2024).</p>
+            <template>
+                <div class="also mt-8">
+                    <p class="font-mono text-[10px] text-stone-500 uppercase tracking-[0.25em] mb-3">Other tools</p>
+                    <div class="flex flex-col gap-3">
+                        <div v-for="tool in tools" :key="tool.url"
+                            class="flex flex-col sm:flex-row items-center justify-between gap-4 px-5 py-4 border border-stone-700 rounded-xl bg-stone-800/40">
+                            <div>
+                                <p class="text-parchment font-semibold text-sm">{{ tool.name }}</p>
+                                <p class="text-stone-400 text-xs mt-0.5">{{ tool.description }}</p>
+                            </div>
+                            <a :href="tool.url" target="_blank" rel="noopener"
+                                class="shrink-0 btn-secondary text-sm !px-5 !py-2">Visit</a>
                         </div>
-                        <a href="https://www.tomeofchanges.com/" target="_blank" rel="noopener"
-                            class="shrink-0 btn-secondary text-sm !px-5 !py-2">Visit</a>
-                    </div>
-
-                    <div
-                        class="flex flex-col sm:flex-row items-center justify-between gap-4 px-5 py-4 border border-stone-700 rounded-xl bg-stone-800/40">
-                        <div>
-                            <p class="text-parchment font-semibold text-sm">Cantrip</p>
-                            <p class="text-stone-400 text-xs mt-0.5">Spell tracker and spell organizer for your D&D
-                                sessions.
-                            </p>
-                        </div>
-                        <a href="https://cantrip.vazio.club" target="_blank" rel="noopener"
-                            class="shrink-0 btn-secondary text-sm !px-5 !py-2">Visit</a>
                     </div>
                 </div>
-            </div>
+            </template>
 
 
         </section>
@@ -164,7 +152,27 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+
+interface Tool {
+    name: string
+    description: string
+    url: string
+}
+
+const tools: Tool[] = [
+    {
+        name: 'Tome of Changes',
+        description: 'Side-by-side comparison of every rule change between D&D 5e and 5.5e (2024).',
+        url: 'https://www.tomeofchanges.com/',
+    },
+    {
+        name: 'Cantrip',
+        description: 'Spell tracker and spell organizer for your D&D sessions.',
+        url: 'https://cantrip.vazio.club',
+    },
+]
+
 const abilities = [
     { label: 'Str', score: 16, mod: 3 },
     { label: 'Dex', score: 12, mod: 1 },

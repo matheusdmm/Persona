@@ -2,7 +2,6 @@ export type CategoryKey = 'backgrounds' | 'species' | 'classes' | 'spells' | 'it
 
 export interface RawEntry {
   name: string
-  publisher: string
   book: string
   description?: string
   properties?: Record<string, unknown>
