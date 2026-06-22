@@ -89,7 +89,7 @@ async function handleImport(e) {
     if (!data?.draft) throw new Error()
     store.importCharacter(data)
   } catch {
-    importError.value = 'Invalid file — make sure it\'s an exported HeroScribe character.'
+    importError.value = 'Invalid file — make sure it\'s an exported Persona character.'
   } finally {
     e.target.value = ''
   }

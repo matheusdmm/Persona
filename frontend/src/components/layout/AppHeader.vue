@@ -4,7 +4,7 @@
     <!-- Main bar -->
     <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
       <RouterLink to="/" class="font-body text-3xl font-semibold text-parchment tracking-wide" @click="close">
-        HeroScribe
+        Persona
       </RouterLink>
 
       <!-- Desktop nav -->

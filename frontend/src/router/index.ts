@@ -6,7 +6,7 @@ import SavedCharactersView  from '@/views/SavedCharactersView.vue'
 import ContentLibraryView   from '@/views/ContentLibraryView.vue'
 import ShareView            from '@/views/ShareView.vue'
 
-const BASE_TITLE = 'HeroScribe'
+const BASE_TITLE = 'Persona'
 const BASE_DESC  = 'Free D&D 5e and 5.5e character creator. Race, class, spells, and gear — complete print-ready sheet in minutes.'
 
 const routes: RouteRecordRaw[] = [
@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     component: HomeView,
     meta: {
-      title: 'HeroScribe — D&D Character Creator',
+      title: 'Persona — D&D Character Creator',
       description: BASE_DESC,
     },
   },

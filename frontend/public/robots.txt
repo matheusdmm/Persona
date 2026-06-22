@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://heroscribe.vercel.app/sitemap.xml
+Sitemap: https://persona.vazio.club/sitemap.xml

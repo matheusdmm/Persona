@@ -1,8 +1,8 @@
-# HeroScribe
+# Persona
 
-> A free, no-account D&D character creator for 5e and 5.5e (2024).
+> A free, no-account D&D character creator for 5e and 5.5e (2024). Live at [persona.vazio.club](https://persona.vazio.club).
 
-**Stack:** Go (Vercel Serverless) · Vue 3 · TypeScript · HeadlessUI · Tailwind CSS · Pinia · Vitest
+**Stack:** Go (Echo v5) · Vue 3 · TypeScript · HeadlessUI · Tailwind CSS · Pinia · Vitest · Bun · Docker / Coolify
 
 ---
 
@@ -27,13 +27,11 @@
 ## Project Structure
 
 ```
-heroscribe/
-├── vercel.json                  # Build & rewrite config
-├── api/                         # Go serverless functions
-│   ├── classes.go               # GET /api/classes
-│   ├── races.go                 # GET /api/races
-│   ├── calculate.go             # POST /api/calculate
-│   └── data/data.go             # All SRD game data (races, classes, structs)
+persona/
+├── Dockerfile                   # Multi-stage build: Bun (frontend) + Go (backend) → single image
+├── docker-compose.yml           # Local image build/run for parity with Coolify
+├── server/
+│   └── main.go                  # Go HTTP server (Echo v5) — API routes + static file serving (SPA fallback)
 └── frontend/
     ├── tsconfig.json
     ├── tests/
@@ -71,13 +69,15 @@ heroscribe/
 ```bash
 # Frontend only (proxies /api → :3000)
 cd frontend
-npm install
-npm run dev          # http://localhost:5173
+bun install
+bun run dev          # http://localhost:5173
 
-# Full stack (frontend + Go API)
-npm i -g vercel
-vercel dev           # http://localhost:3000
+# Go API (in another terminal)
+cd server
+go run .             # http://localhost:3000
 ```
+
+Or from the repo root, run both at once: `bun run dev` (or individually: `bun run frontend` / `bun run backend`).
 
 ---
 
@@ -85,27 +85,37 @@ vercel dev           # http://localhost:3000
 
 ```bash
 cd frontend
-npm test
+bun run test
 ```
 
-100 tests across two files:
+167 tests across two files:
 
 | File | What it covers |
 |---|---|
 | `features.test.js` | Spell slot tables, `emptyCharacter`, race languages, weapon proficiency, Go API endpoints, Open5e spell filter, extended WotC content |
 | `validations.test.js` | `modifier()` / `formatMod()`, point buy cost table, step navigation, Pinia store, save / load / delete / import |
 
-> **Note:** Go API tests require `vercel dev` running on `:3000`. Open5e and extended content tests require internet access. All pure-logic tests run offline.
+> **Note:** Go API tests require the Go server running on `:3000` (`cd server && go run .`). Open5e and extended content tests require internet access. All pure-logic tests run offline.
+
+> **Known issue:** `bun run typecheck` (and the `vue-tsc` step in `bun run build`) currently fails to resolve `.vue` module types under Bun — `vue-tsc`/Volar monkey-patches the TypeScript compiler module in a way that doesn't appear to survive Bun's module loader. This does **not** affect the actual production bundle: `vite build` itself (and the Dockerfile, which calls `vite build` directly) works correctly. Run `vue-tsc --noEmit` under Node if you need a full typecheck until upstream catches up.
 
 ---
 
 ## Deploy
 
-```bash
-vercel
-```
+Self-hosted on [Coolify](https://coolify.io) from the included `Dockerfile` — no separate frontend/backend services needed.
 
-Vercel builds the Vue app from `frontend/dist` and runs the Go handlers as serverless functions. Routes under `/api/*` hit Go; everything else falls through to `index.html` for client-side routing.
+The image is a multi-stage build: Bun builds the Vue frontend (`frontend/dist`), Go builds the backend binary, and the final container runs a single Go process that serves `/api/*` routes and the built frontend (with SPA fallback to `index.html` for client-side routing).
+
+1. In Coolify, create a new application from this Git repo with the **Dockerfile** build pack.
+2. (Optional) Set `VITE_UMAMI_URL` and `VITE_UMAMI_WEBSITE_ID` as **build-time** variables if you're using self-hosted [Umami](https://umami.is) analytics — see `frontend/.env.example`. Leave unset to disable analytics.
+3. Deploy. Coolify exposes the container's port `3000` behind its proxy.
+
+To test the production image locally before deploying:
+
+```bash
+docker compose up --build
+```
 
 ---
 
@@ -113,7 +123,7 @@ Vercel builds the Vue app from `frontend/dist` and runs the Go handlers as serve
 
 **Editions** — the `edition` field on races and classes is `"5e"`, `"5.5e"`, or `"both"`. Selectors filter by the draft's `edition` field.
 
-**HP formula** — `hitDie + CON_mod + (level - 1) × (floor(hitDie / 2) + 1 + CON_mod)` — computed server-side in `calculate.go`.
+**HP formula** — `hitDie + CON_mod + (level - 1) × (floor(hitDie / 2) + 1 + CON_mod)` — computed server-side in `server/main.go`.
 
 **Point buy** — non-linear cost table (scores 8–15, cost 0–9 points) in `useAbilityScores.ts`.
 

@@ -1,5 +1,5 @@
 /**
- * Feature tests for HeroScribe.
+ * Feature tests for Persona.
  * Run:  npm test          (from frontend/)
  *
  * Groups:

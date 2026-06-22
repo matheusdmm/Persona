@@ -8,7 +8,7 @@
                     <p
                         class="font-body text-lg font-semibold text-parchment tracking-wide mb-2"
                     >
-                        HeroScribe
+                        Persona
                     </p>
                     <p class="text-stone-400 text-sm leading-relaxed">
                         A free character creator for D&D 5e and 5.5e. No account
@@ -90,7 +90,7 @@
                 class="border-t border-stone-700 pt-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs text-stone-500"
             >
                 <p>
-                    © {{ year }} HeroScribe. Built by
+                    © {{ year }} Persona. Built by
                     <a
                         href="https://matheusdmm.dev"
                         target="_blank"

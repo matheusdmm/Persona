@@ -5,15 +5,14 @@
   "author": "Matheus da Fonseca Dummer",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "typecheck": "vue-tsc --noEmit",
-    "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "test": "vitest run"
+    "dev": "bunx vite",
+    "typecheck": "bunx vue-tsc --noEmit",
+    "build": "bunx vue-tsc --noEmit && bunx vite build",
+    "preview": "bunx vite preview",
+    "test": "bunx vitest run"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
-    "@vercel/analytics": "^2.0.1",
     "html2pdf.js": "^0.14.0",
     "lz-string": "^1.5.0",
     "pinia": "^3.0.4",

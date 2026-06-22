@@ -11,7 +11,6 @@
       <RouterView />
     </main>
     <AppFooter />
-    <Analytics />
   </div>
 </template>
 
@@ -19,7 +18,6 @@
 import { ref } from 'vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
-import { Analytics } from '@vercel/analytics/vue'
 
 const x = ref(-1000)
 const y = ref(-1000)

@@ -1,0 +1,11 @@
+**/node_modules
+.git
+frontend/dist
+frontend/.vite
+server/*.exe
+server/*.test
+*.md
+.env
+.env.local
+.claude
+CLAUDE.md

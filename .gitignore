@@ -5,9 +5,6 @@
 frontend/dist/
 frontend/.vite/
 
-# Vercel
-.vercel
-
 # Environment
 .env
 .env.local
