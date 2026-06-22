@@ -1,11 +1,6 @@
 # ---- Frontend build ----
 FROM oven/bun:1-alpine AS frontend
 WORKDIR /app/frontend
-# Vite inlines VITE_* vars at build time, so they must arrive as build args.
-ARG VITE_UMAMI_URL
-ARG VITE_UMAMI_WEBSITE_ID
-ENV VITE_UMAMI_URL=${VITE_UMAMI_URL}
-ENV VITE_UMAMI_WEBSITE_ID=${VITE_UMAMI_WEBSITE_ID}
 COPY frontend/package.json frontend/bun.lock ./
 RUN bun install --frozen-lockfile
 COPY frontend/ ./
