@@ -1,6 +1,6 @@
 # Persona
 
-> D&D character creator for 5e and 5.5e (2024). Live at [persona.vazio.club](https://persona.vazio.club).f
+> D&D character creator for 5e and 5.5e (2024). Live at [persona.vazio.club](https://persona.vazio.club)
 
 **Stack:** Go (Echo v5) · Vue 3 · TypeScript · HeadlessUI · Tailwind CSS · Pinia · Vitest · Bun · Docker / Coolify
 
