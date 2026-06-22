@@ -9,7 +9,7 @@
       <!-- ── HEADER ── -->
       <div class="card !p-5 flex items-start justify-between gap-6 flex-wrap">
         <div class="flex-1 min-w-0">
-          <h1 class="text-4xl font-semibold text-parchment leading-tight truncate">
+          <h1 class="font-display text-3xl sm:text-4xl font-bold text-parchment leading-tight truncate">
             {{ store.draft.name }}
           </h1>
           <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-sm">
@@ -86,12 +86,12 @@
               >
                 <span class="text-[10px] text-stone-400 uppercase tracking-widest">{{ ABILITY_LABELS[ability] }}</span>
                 <span
-                  class="text-2xl font-bold leading-none mt-1"
+                  class="stat-num text-2xl font-bold leading-none mt-1"
                   :class="store.sheet.modifiers[ability] >= 0 ? 'text-vivid' : 'text-red-500'"
                 >
                   {{ formatMod(store.sheet.modifiers[ability]) }}
                 </span>
-                <span class="text-sm font-semibold text-parchment mt-1 leading-none">
+                <span class="stat-num text-sm font-semibold text-parchment mt-1 leading-none">
                   {{ store.sheet.input.abilities[ability] }}
                 </span>
               </div>
@@ -107,7 +107,7 @@
                   class="w-3 h-3 rounded-full border-2 shrink-0 transition-colors"
                   :class="save.isProficient ? 'bg-crimson border-crimson' : 'border-stone-500'"
                 />
-                <span class="w-8 text-right font-semibold shrink-0"
+                <span class="stat-num w-8 text-right font-semibold shrink-0"
                   :class="save.bonus >= 0 ? 'text-parchment' : 'text-red-500'">
                   {{ formatMod(save.bonus) }}
                 </span>
@@ -125,7 +125,7 @@
                   class="w-2.5 h-2.5 rounded-full border-2 shrink-0"
                   :class="skill.isProficient ? 'bg-crimson border-crimson' : 'border-stone-600'"
                 />
-                <span class="w-6 text-right font-semibold shrink-0"
+                <span class="stat-num w-6 text-right font-semibold shrink-0"
                   :class="skill.modifier >= 0 ? 'text-parchment' : 'text-red-500'">
                   {{ formatMod(skill.modifier) }}
                 </span>
@@ -135,7 +135,7 @@
             </ul>
             <div class="mt-3 pt-2 border-t border-stone-700 flex justify-between text-xs">
               <span class="text-stone-400">Passive Perception</span>
-              <span class="font-semibold text-parchment">{{ passivePerception }}</span>
+              <span class="stat-num font-semibold text-parchment">{{ passivePerception }}</span>
             </div>
           </div>
 
@@ -147,18 +147,18 @@
           <!-- Core combat stats -->
           <div class="grid grid-cols-3 gap-3">
             <div class="card !p-4 text-center">
-              <span class="text-3xl font-bold text-parchment">{{ store.sheet.armor_class }}</span>
+              <span class="stat-num text-3xl font-bold text-parchment">{{ store.sheet.armor_class }}</span>
               <div class="section-title !mb-0 mt-1">Armor Class</div>
             </div>
             <div class="card !p-4 text-center">
-              <span class="text-3xl font-bold"
+              <span class="stat-num text-3xl font-bold"
                 :class="store.sheet.initiative >= 0 ? 'text-parchment' : 'text-red-500'">
                 {{ formatMod(store.sheet.initiative) }}
               </span>
               <div class="section-title !mb-0 mt-1">Initiative</div>
             </div>
             <div class="card !p-4 text-center">
-              <span class="text-3xl font-bold text-parchment">
+              <span class="stat-num text-3xl font-bold text-parchment">
                 {{ store.selectedRace?.speed ?? '—' }}
               </span>
               <div class="section-title !mb-0 mt-1">Speed (ft)</div>
@@ -169,7 +169,7 @@
           <div class="grid grid-cols-3 gap-3">
             <div class="card !p-4 col-span-1">
               <div class="section-title">Max HP</div>
-              <span class="text-4xl font-bold text-parchment">{{ store.sheet.max_hp }}</span>
+              <span class="stat-num text-4xl font-bold text-parchment">{{ store.sheet.max_hp }}</span>
               <!-- HP breakdown -->
               <div v-if="hpBreakdown" class="mt-2 pt-2 border-t border-stone-700 space-y-0.5 text-[11px] text-stone-500 leading-relaxed">
                 <div>
@@ -192,7 +192,7 @@
             </div>
             <div class="card !p-4 col-span-1">
               <div class="section-title">Hit Dice</div>
-              <span class="text-2xl font-bold text-parchment">
+              <span class="stat-num text-2xl font-bold text-parchment">
                 {{ store.sheet.input.level }}d{{ store.selectedClass?.hit_die ?? '8' }}
               </span>
               <div class="mt-2 text-[11px] text-stone-500">
@@ -202,7 +202,7 @@
             </div>
             <div class="card !p-4 col-span-1">
               <div class="section-title">Prof. Bonus</div>
-              <span class="text-2xl font-bold text-gold">
+              <span class="stat-num text-2xl font-bold text-gold">
                 {{ formatMod(store.sheet.proficiency_bonus) }}
               </span>
             </div>
@@ -226,10 +226,10 @@
                     {{ atk.name }}
                     <span v-if="!atk.proficient" class="text-stone-500 font-normal"> *</span>
                   </td>
-                  <td class="py-1.5 text-center font-bold" :class="atk.attackBonus >= 0 ? 'text-vivid' : 'text-red-500'">
+                  <td class="stat-num py-1.5 text-center font-bold" :class="atk.attackBonus >= 0 ? 'text-vivid' : 'text-red-500'">
                     {{ formatMod(atk.attackBonus) }}
                   </td>
-                  <td class="py-1.5 text-center text-gold font-semibold">{{ atk.damageStr }}</td>
+                  <td class="stat-num py-1.5 text-center text-gold font-semibold">{{ atk.damageStr }}</td>
                   <td class="py-1.5 text-stone-400 capitalize">{{ atk.damageType }}</td>
                 </tr>
               </tbody>
@@ -383,11 +383,11 @@
         <div class="flex flex-wrap gap-6 mb-4">
           <div>
             <p class="text-[10px] text-stone-400 uppercase tracking-widest mb-0.5">Spell Save DC</p>
-            <p class="text-3xl font-bold text-parchment">{{ spellSaveDC }}</p>
+            <p class="stat-num text-3xl font-bold text-parchment">{{ spellSaveDC }}</p>
           </div>
           <div>
             <p class="text-[10px] text-stone-400 uppercase tracking-widest mb-0.5">Spell Attack</p>
-            <p class="text-3xl font-bold" :class="spellAttackBonus >= 0 ? 'text-parchment' : 'text-red-500'">
+            <p class="stat-num text-3xl font-bold" :class="spellAttackBonus >= 0 ? 'text-parchment' : 'text-red-500'">
               {{ formatMod(spellAttackBonus) }}
             </p>
           </div>

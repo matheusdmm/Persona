@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="text-xl font-semibold text-parchment mb-1">Skill Proficiencies</h2>
+    <h2 class="font-display text-2xl font-bold text-parchment tracking-wide mb-1">Skill Proficiencies</h2>
     <p class="text-stone-400 text-sm mb-4">
       Choose <strong class="text-parchment">{{ limit }}</strong> skill{{ limit !== 1 ? 's' : '' }}
       from your {{ store.selectedClass?.name }} list.

@@ -3,7 +3,7 @@
 
     <!-- Main bar -->
     <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-      <RouterLink to="/" class="font-body text-3xl font-semibold text-parchment tracking-wide" @click="close">
+      <RouterLink to="/" class="font-display text-2xl sm:text-[1.7rem] font-bold text-parchment tracking-[0.18em] uppercase leading-none" @click="close">
         Persona
       </RouterLink>
 

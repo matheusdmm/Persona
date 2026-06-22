@@ -21,7 +21,7 @@
       <template v-for="(step, i) in steps" :key="i">
         <div class="flex flex-col items-center">
           <div
-            class="w-8 h-8 flex items-center justify-center text-sm font-bold rounded-full border-2 transition-all duration-200"
+            class="stat-num w-8 h-8 flex items-center justify-center text-sm font-bold rounded-full border-2 transition-all duration-200"
             :class="
               i < current
                 ? 'bg-crimson border-crimson text-white'

@@ -26,8 +26,11 @@ export default {
         vivid:     'rgb(var(--c-vivid)     / <alpha-value>)',
       },
       fontFamily: {
-        display: ['"MedievalSharp"', 'serif'],
+        // Cinzel — engraved Roman caps, used with restraint for headlines & the wordmark
+        display: ['"Cinzel"', 'Georgia', 'serif'],
         body: ['"Redaction 10"', '"Crimson Text"', 'Georgia', 'serif'],
+        // Spline Sans Mono — the numeric vernacular of a character sheet (scores, mods, dice, AC/HP)
+        mono: ['"Spline Sans Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       borderRadius: {
         DEFAULT: '0.375rem',

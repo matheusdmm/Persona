@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { emptyCharacter, SPELLCASTING_CLASSES, getMaxCantrips, getMaxSpells, getSpellSlots } from '@/types'
 import { useApi } from '@/composables/useApi'
 import type { Race, DnDClass, CharacterDraft, CharacterSheet, Spell, SavedEntry, ArmorItem } from '@/types/models'
@@ -7,13 +7,24 @@ import type { Race, DnDClass, CharacterDraft, CharacterSheet, Spell, SavedEntry,
 export const useCharacterStore = defineStore('character', () => {
   const { fetchRaces, fetchClasses, fetchArmor, calculateSheet, fetchSpells } = useApi()
 
+  // Draft autosave — survive an accidental refresh mid-creation
+  const DRAFT_KEY = 'dnd_draft'
+  const persistedDraft = (() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY)
+      return raw ? (JSON.parse(raw) as { draft: CharacterDraft; step: number }) : null
+    } catch { return null }
+  })()
+
   // State
-  const draft          = ref<CharacterDraft>(emptyCharacter())
+  const draft          = ref<CharacterDraft>(persistedDraft?.draft ?? emptyCharacter())
   const races          = ref<Race[]>([])
   const classes        = ref<DnDClass[]>([])
   const armors         = ref<ArmorItem[]>([])
   const sheet          = ref<CharacterSheet | null>(null)
-  const currentStep    = ref(0)
+  const currentStep    = ref(persistedDraft?.step ?? 0)
+  // True when we restored an in-progress draft (has a name or is past step 0)
+  const resumedDraft   = ref(!!persistedDraft && (!!persistedDraft.draft?.name || (persistedDraft.step ?? 0) > 0))
   const loading        = ref(false)
   const error          = ref<string | null>(null)
   const LS_KEY         = 'dnd_characters'
@@ -22,26 +33,36 @@ export const useCharacterStore = defineStore('character', () => {
   const spellsLoading  = ref(false)
   const spellsCache: Record<string, Spell[]> = {}
 
+  // Autosave draft + step on every change
+  watch([draft, currentStep], () => {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ draft: draft.value, step: currentStep.value }))
+  }, { deep: true })
+
   // Getters
   const selectedRace  = computed(() => races.value.find(r => r.id === draft.value.race))
   const selectedClass = computed(() => classes.value.find(c => c.id === draft.value.class))
+  // Spell selection requirement for the current draft, or null for non-casters
+  const spellProgress = computed(() => {
+    const d = draft.value
+    if (!SPELLCASTING_CLASSES.has(d.class)) return null
+    const raceBonus = (ab: string) =>
+      selectedRace.value?.ability_bonuses?.find(b => b.ability === ab)?.bonus ?? 0
+    const wisMod = Math.floor((d.abilities.wisdom   + raceBonus('wisdom')   - 10) / 2)
+    const chaMod = Math.floor((d.abilities.charisma + raceBonus('charisma') - 10) / 2)
+    const slots = getSpellSlots(d.class, d.level)
+    const hasSlots = slots ? slots.some(s => s > 0) : false
+    const maxC = getMaxCantrips(d.class, d.edition)
+    const maxS = hasSlots ? getMaxSpells(d.class, d.level, wisMod, chaMod) : 0
+    const spells = d.spells ?? []
+    const cantripCnt = spells.filter(s => s.level === 0).length
+    const spellCnt   = spells.filter(s => s.level  > 0).length
+    return { maxC, maxS, cantripCnt, spellCnt, complete: cantripCnt >= maxC && spellCnt >= maxS }
+  })
+
   const isComplete = computed(() => {
     const d = draft.value
     if (!d.name || !d.race || !d.class || !d.background) return false
-    if (SPELLCASTING_CLASSES.has(d.class)) {
-      const raceBonus = (ab: string) =>
-        selectedRace.value?.ability_bonuses?.find(b => b.ability === ab)?.bonus ?? 0
-      const wisMod = Math.floor((d.abilities.wisdom   + raceBonus('wisdom')   - 10) / 2)
-      const chaMod = Math.floor((d.abilities.charisma + raceBonus('charisma') - 10) / 2)
-      const maxC = getMaxCantrips(d.class, d.edition)
-      const maxS = getMaxSpells(d.class, d.level, wisMod, chaMod)
-      const slots = getSpellSlots(d.class, d.level)
-      const hasSlots = slots ? slots.some(s => s > 0) : false
-      const spells = d.spells ?? []
-      const cantripCnt = spells.filter(s => s.level === 0).length
-      const spellCnt   = spells.filter(s => s.level  > 0).length
-      if (cantripCnt < maxC || spellCnt < (hasSlots ? maxS : 0)) return false
-    }
+    if (spellProgress.value && !spellProgress.value.complete) return false
     return true
   })
   const isSaved = computed(() =>
@@ -51,6 +72,7 @@ export const useCharacterStore = defineStore('character', () => {
   // Actions
   async function loadData(): Promise<void> {
     loading.value = true
+    error.value = null
     try {
       ;[races.value, classes.value, armors.value] = await Promise.all([fetchRaces(), fetchClasses(), fetchArmor()])
     } catch {
@@ -62,6 +84,7 @@ export const useCharacterStore = defineStore('character', () => {
 
   async function calculate(): Promise<void> {
     loading.value = true
+    error.value = null
     try {
       if (!draft.value.createdAt) draft.value.createdAt = new Date().toISOString()
       sheet.value = await calculateSheet({
@@ -83,10 +106,12 @@ export const useCharacterStore = defineStore('character', () => {
   function nextStep(): void { currentStep.value++ }
   function prevStep(): void { currentStep.value-- }
   function reset(): void {
-    draft.value       = emptyCharacter()
-    sheet.value       = null
-    currentStep.value = 0
-    error.value       = null
+    draft.value        = emptyCharacter()
+    sheet.value        = null
+    currentStep.value  = 0
+    error.value        = null
+    resumedDraft.value = false
+    localStorage.removeItem(DRAFT_KEY)
   }
 
   async function loadSpells(className: string): Promise<void> {
@@ -144,9 +169,9 @@ export const useCharacterStore = defineStore('character', () => {
   }
 
   return {
-    draft, races, classes, armors, sheet, currentStep, loading, error, savedCharacters,
+    draft, races, classes, armors, sheet, currentStep, resumedDraft, loading, error, savedCharacters,
     availableSpells, spellsLoading,
-    selectedRace, selectedClass, isComplete, isSaved,
+    selectedRace, selectedClass, isComplete, isSaved, spellProgress,
     loadData, calculate, nextStep, prevStep, reset,
     loadSpells, saveCharacter, importCharacter, unsaveCharacter, loadSavedCharacter,
   }

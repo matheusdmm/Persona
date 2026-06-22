@@ -6,7 +6,7 @@
                 <!-- Brand -->
                 <div class="max-w-xs">
                     <p
-                        class="font-body text-lg font-semibold text-parchment tracking-wide mb-2"
+                        class="font-display text-lg font-bold text-parchment uppercase tracking-[0.18em] mb-2"
                     >
                         Persona
                     </p>
@@ -47,19 +47,27 @@
                             Also by Matheus
                         </p>
                         <a
-                            href="https://www.tomeofchanges.com/"
-                            target="_blank"
-                            rel="noopener"
-                            class="text-stone-400 hover:text-parchment transition-colors"
-                            >Tome of Changes</a
-                        >
-                        <a
                             href="https://matheusdmm.dev"
                             target="_blank"
                             rel="noopener"
                             class="text-stone-400 hover:text-parchment transition-colors"
                             >matheusdmm.dev</a
                         >
+                        <a
+                            href="cantrip.vazio.club"
+                            target="_blank"
+                            rel="noopener"
+                            class="text-stone-400 hover:text-parchment transition-colors"
+                            >Cantrip</a
+                        >
+                        <a
+                            href="https://www.tomeofchanges.com/"
+                            target="_blank"
+                            rel="noopener"
+                            class="text-stone-400 hover:text-parchment transition-colors"
+                            >Tome of Changes</a
+                        >
+                        
                     </div>
                     <div class="flex flex-col gap-2.5">
                         <p

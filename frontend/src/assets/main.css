@@ -129,6 +129,29 @@ html.dark {
   textarea {
     @apply rounded-md;
   }
+
+  /* Visible keyboard focus everywhere, themed to the gold accent */
+  :focus-visible {
+    outline: 2px solid rgb(var(--c-gold));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Game numbers (scores, modifiers, dice, AC/HP) lock to a tabular grid */
+  .stat-num {
+    @apply font-mono;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+    letter-spacing: -0.02em;
+  }
+
+  /* Respect users who prefer less motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
 }
 
 /* ── Components ─────────────────────────────────────────────────────── */

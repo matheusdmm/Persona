@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="text-xl font-semibold text-parchment mb-1">Character Details</h2>
+    <h2 class="font-display text-2xl font-bold text-parchment tracking-wide mb-1">Character Details</h2>
     <p class="text-stone-400 text-sm mb-6">Give your character a name and background.</p>
 
     <div class="space-y-5 max-w-md">

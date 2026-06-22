@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="text-xl font-semibold text-parchment mb-1">Choose your Class</h2>
+    <h2 class="font-display text-2xl font-bold text-parchment tracking-wide mb-1">Choose your Class</h2>
     <p class="text-stone-400 text-sm mb-6">
       Your class defines your role in combat and adventure.
     </p>

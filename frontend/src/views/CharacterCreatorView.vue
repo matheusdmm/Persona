@@ -1,11 +1,29 @@
 <template>
   <div class="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+    <!-- Resumed an in-progress draft -->
+    <div
+      v-if="showResume"
+      class="mb-6 flex items-center gap-3 px-4 py-3 rounded-xl border border-gold/30 bg-gold/10 text-sm"
+    >
+      <span class="text-gold">✦</span>
+      <span class="text-parchment flex-1">Picked up your character in progress.</span>
+      <button class="text-stone-400 hover:text-parchment underline underline-offset-2" @click="startOver">
+        Start over
+      </button>
+      <button class="text-stone-500 hover:text-parchment text-lg leading-none" aria-label="Dismiss" @click="showResume = false">
+        ×
+      </button>
+    </div>
+
     <StepIndicator :steps="STEPS" :current="store.currentStep" class="mb-10" />
 
     <div v-if="store.loading" class="flex justify-center py-20 text-stone-400">
       <LoadingSpinner class="w-8 h-8" />
     </div>
-    <div v-else-if="store.error" class="text-center py-10 text-red-500">{{ store.error }}</div>
+    <div v-else-if="store.error" class="text-center py-10">
+      <p class="text-red-500 mb-4">{{ store.error }}</p>
+      <button class="btn-primary" @click="store.loadData()">Retry</button>
+    </div>
 
     <div v-else class="bg-stone-900 rounded-2xl border border-stone-700 p-8 shadow-card">
       <DetailsStep   v-if="store.currentStep === 0" v-model="store.draft" />
@@ -44,7 +62,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCharacterStore } from '@/stores/character'
 import StepIndicator from '@/components/ui/StepIndicator.vue'
@@ -61,6 +79,13 @@ const STEPS = ['Details', 'Race', 'Class', 'Abilities', 'Skills', 'Extras', 'Spe
 
 const store = useCharacterStore()
 const router = useRouter()
+
+const showResume = ref(store.resumedDraft)
+
+function startOver() {
+  store.reset()
+  showResume.value = false
+}
 
 onMounted(() => {
   if (!store.races.length) store.loadData()
@@ -100,7 +125,16 @@ const proceedHint = computed(() => {
     }
   } else {
     if (store.isComplete) return ''
-    return 'Select all required cantrips and spells to continue'
+    const sp = store.spellProgress
+    if (sp) {
+      const needC = Math.max(0, sp.maxC - sp.cantripCnt)
+      const needS = Math.max(0, sp.maxS - sp.spellCnt)
+      const parts = []
+      if (needC > 0) parts.push(`${needC} more cantrip${needC !== 1 ? 's' : ''}`)
+      if (needS > 0) parts.push(`${needS} more spell${needS !== 1 ? 's' : ''}`)
+      if (parts.length) return `Choose ${parts.join(' and ')} to continue`
+    }
+    return 'Complete the required selections to continue'
   }
   return ''
 })
