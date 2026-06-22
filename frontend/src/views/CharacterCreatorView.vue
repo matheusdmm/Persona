@@ -91,38 +91,48 @@ onMounted(() => {
   if (!store.races.length) store.loadData()
 })
 
-const canProceed = computed(() => {
-  switch (store.currentStep) {
-    case 0: return !!store.draft.name
-    case 1: return !!store.draft.race
-    case 2: {
-      if (!store.draft.class) return false
-      const cls = store.selectedClass
-      if (cls?.subclasses?.length && store.draft.level >= cls.subclasses[0].level_gained) {
+// Required-field rules per step, in priority order. canProceed and proceedHint
+// both read from this single table so they can't drift out of sync with each other.
+const stepRules = computed(() => [
+  [ // 0: Details
+    { valid: () => !!store.draft.name, message: () => 'Enter a character name to continue' },
+    { valid: () => !!store.draft.background, message: () => 'Select a background to continue' },
+  ],
+  [ // 1: Race
+    { valid: () => !!store.draft.race, message: () => 'Select a race to continue' },
+  ],
+  [ // 2: Class
+    { valid: () => !!store.draft.class, message: () => 'Select a class to continue' },
+    {
+      valid: () => {
+        const cls = store.selectedClass
+        if (!cls?.subclasses?.length || store.draft.level < cls.subclasses[0].level_gained) return true
         return !!store.draft.subclass
-      }
-      return true
-    }
-    case 4: return store.draft.skills.length === (store.selectedClass?.skill_choices ?? 0)
-    default: return true
-  }
-})
+      },
+      message: () => 'Choose a subclass to continue',
+    },
+  ],
+  [], // 3: Abilities — always has a value, nothing to require
+  [ // 4: Skills
+    {
+      valid: () => store.draft.skills.length === (store.selectedClass?.skill_choices ?? 0),
+      message: () => {
+        const need = (store.selectedClass?.skill_choices ?? 0) - store.draft.skills.length
+        return `Choose ${need} more skill${need !== 1 ? 's' : ''} to continue`
+      },
+    },
+  ],
+  [], // 5: Extras — nothing required
+])
+
+const canProceed = computed(() =>
+  (stepRules.value[store.currentStep] ?? []).every(r => r.valid())
+)
 
 const proceedHint = computed(() => {
   if (store.currentStep < STEPS.length - 1) {
-    if (canProceed.value) return ''
-    switch (store.currentStep) {
-      case 0: return 'Enter a character name to continue'
-      case 1: return 'Select a race to continue'
-      case 2: {
-        if (!store.draft.class) return 'Select a class to continue'
-        return 'Choose a subclass to continue'
-      }
-      case 4: {
-        const need = (store.selectedClass?.skill_choices ?? 0) - store.draft.skills.length
-        return `Choose ${need} more skill${need !== 1 ? 's' : ''} to continue`
-      }
-    }
+    const failed = (stepRules.value[store.currentStep] ?? []).find(r => !r.valid())
+    return failed ? failed.message() : ''
   } else {
     if (store.isComplete) return ''
     const sp = store.spellProgress
