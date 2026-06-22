@@ -1,6 +1,6 @@
 # Persona
 
-> A free, no-account D&D character creator for 5e and 5.5e (2024). Live at [persona.vazio.club](https://persona.vazio.club).
+> D&D character creator for 5e and 5.5e (2024). Live at [persona.vazio.club](https://persona.vazio.club).f
 
 **Stack:** Go (Echo v5) · Vue 3 · TypeScript · HeadlessUI · Tailwind CSS · Pinia · Vitest · Bun · Docker / Coolify
 
@@ -18,8 +18,9 @@
 - **Content Library** — `/library` page to browse all extended content with source filter toggles
 - Server-side character sheet calculation (HP, AC, modifiers, initiative, proficiency bonus)
 - **Save characters** to localStorage — star/favorite, browse at `/saved`
-- **Print to PDF** via browser print (custom A4 layout, no external libraries)
-- **Export JSON** for Foundry VTT, Roll20, or backup
+- **Print to PDF** via browser print (custom A4 layout with no external libraries)
+- **Export JSON** for backup or sharing locally
+- **Encoded share feature** for URL share through social media
 - Fully responsive — mobile nav, compact step indicator on small screens
 
 ---
@@ -67,17 +68,17 @@ persona/
 ## Local Development
 
 ```bash
-# Frontend only (proxies /api → :3000)
+# Frontend only
 cd frontend
 bun install
 bun run dev          # http://localhost:5173
 
-# Go API (in another terminal)
+# Go API
 cd server
 go run .             # http://localhost:3000
 ```
 
-Or from the repo root, run both at once: `bun run dev` (or individually: `bun run frontend` / `bun run backend`).
+Or from the repo root, run both at once: `bun run dev` (or `bun run frontend` / `bun run backend` to run individual sessions/detached).
 
 ---
 
@@ -90,14 +91,12 @@ bun run test
 
 167 tests across two files:
 
-| File | What it covers |
-|---|---|
-| `features.test.js` | Spell slot tables, `emptyCharacter`, race languages, weapon proficiency, Go API endpoints, Open5e spell filter, extended WotC content |
-| `validations.test.js` | `modifier()` / `formatMod()`, point buy cost table, step navigation, Pinia store, save / load / delete / import |
+| File                  | What it covers                                                                                                                        |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `features.test.js`    | Spell slot tables, `emptyCharacter`, race languages, weapon proficiency, Go API endpoints, Open5e spell filter, extended WotC content |
+| `validations.test.js` | `modifier()` / `formatMod()`, point buy cost table, step navigation, Pinia store, save / load / delete / import                       |
 
 > **Note:** Go API tests require the Go server running on `:3000` (`cd server && go run .`). Open5e and extended content tests require internet access. All pure-logic tests run offline.
-
-> **Known issue:** `bun run typecheck` (and the `vue-tsc` step in `bun run build`) currently fails to resolve `.vue` module types under Bun — `vue-tsc`/Volar monkey-patches the TypeScript compiler module in a way that doesn't appear to survive Bun's module loader. This does **not** affect the actual production bundle: `vite build` itself (and the Dockerfile, which calls `vite build` directly) works correctly. Run `vue-tsc --noEmit` under Node if you need a full typecheck until upstream catches up.
 
 ---
 
@@ -107,10 +106,6 @@ Self-hosted on [Coolify](https://coolify.io) from the included `Dockerfile` — 
 
 The image is a multi-stage build: Bun builds the Vue frontend (`frontend/dist`), Go builds the backend binary, and the final container runs a single Go process that serves `/api/*` routes and the built frontend (with SPA fallback to `index.html` for client-side routing).
 
-1. In Coolify, create a new application from this Git repo with the **Dockerfile** build pack.
-2. (Optional) Set `VITE_UMAMI_URL` and `VITE_UMAMI_WEBSITE_ID` as **build-time** variables if you're using self-hosted [Umami](https://umami.is) analytics — see `frontend/.env.example`. Leave unset to disable analytics.
-3. Deploy. Coolify exposes the container's port `3000` behind its proxy.
-
 To test the production image locally before deploying:
 
 ```bash
@@ -118,21 +113,3 @@ docker compose up --build
 ```
 
 ---
-
-## Key Conventions
-
-**Editions** — the `edition` field on races and classes is `"5e"`, `"5.5e"`, or `"both"`. Selectors filter by the draft's `edition` field.
-
-**HP formula** — `hitDie + CON_mod + (level - 1) × (floor(hitDie / 2) + 1 + CON_mod)` — computed server-side in `server/main.go`.
-
-**Point buy** — non-linear cost table (scores 8–15, cost 0–9 points) in `useAbilityScores.ts`.
-
-**Spell slots** — computed client-side via `getSpellSlots(className, level)` in `types/index.ts`, using SRD tables for full casters, half casters, and warlock pact magic.
-
-**Open5e spell filter** — uses `spell_lists=<class>` (indexed field). Paladin is an exception: `spell_lists=paladin` returns HTTP 400, so it falls back to `dnd_class=Paladin`.
-
-**Extended content** — toggle state persists via localStorage keys (`hs_ext_items`, `hs_ext_spells`, `hs_ext_backgrounds`). Data is loaded once on first toggle and cached in memory.
-
-**Theming** — Tailwind's stone scale is inverted: `stone-950` = `#fdf8ef` (cream). Never use `bg-white` — use theme-aware classes like `bg-stone-900` so light and dark themes resolve correctly via CSS variables in `main.css`.
-
-**PDF export** — uses `window.print()` with a custom `@media print` block. Do not replace with html2pdf.js or html2canvas — they cause font clipping and page-split artifacts with the custom web fonts (Crimson Text, MedievalSharp).
